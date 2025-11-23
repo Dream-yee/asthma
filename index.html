@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>分科測驗近三年資料</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>分科測驗近三年資料</h1>
+        </header>
+
+        <div class="controls">
+            <div class="select-group">
+                <label for="university-select">選擇學校:</label>
+                <select id="university-select"></select>
+            </div>
+            
+            <div class="select-group">
+                <label for="department-select">選擇科系:</label>
+                <select id="department-select" disabled></select>
+            </div>
+        </div>
+
+        <div class="results">
+            <p class="initial-prompt">請在上方選擇 **學校** 與 **科系** 以查詢資料。</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script> 
+</body>
+</html>

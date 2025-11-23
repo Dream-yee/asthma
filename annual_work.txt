@@ -1,0 +1,17 @@
+
+
+https://www.zamzar.com/convert/pdf-to-csv/
+採計科目所有組合成績人數累計表 https://www2.uac.edu.tw/uac114_note/
+校系最低錄取分數統計 https://www.uac.edu.tw/114data/114_result_school_data.pdf
+
+跑這些檔案檔名記得改
+1. 把最低分數統計convert成csv
+   把原住民之後的全部砍掉
+   中間會有超大empty column記得拿掉
+   跑 college_data_transfrom.py
+
+2. 採計組合累計人數只留組合代碼, 科目組合, 分數區間, 高到低累積百分比, 跑 score_distribution_csv_2_json.py
+
+3. 然後跑 match_groups.py
+
+4. 跑 update_history_data.py
