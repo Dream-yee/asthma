@@ -16,3 +16,13 @@ https://www.ilovepdf.com/pdf_to_excel 用這個轉，超強
 
 4. 跑 update_history_data.py
 
+----
+
+要取得新年度的資料
+是用對UAC爆搜的程式
+
+1. 把新一年的所有組合 (https://uac2.ncku.edu.tw/cross_search/index.php?c=search&m=result_basic) 
+用 command + S 把整個html載下來用get_data_eid.py去跑會得到所有的id
+(不能直接進，要從考分會的校系分則那邊，下面有一個學測採計做篩選的部分按模糊篩選，這樣會取得全部校系)
+
+2. 用get_all_details.py得到今年的結果，就這樣，記得script.js的年次要改
