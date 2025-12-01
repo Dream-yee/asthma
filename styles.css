@@ -338,6 +338,47 @@ body {
     font-weight: 700;
 }
 
+/* --- 靜態系統備註區塊樣式 --- */
+#system-notes-container {
+    /* margin-top: 40px; 增加與上方內容的間距 */
+    /* margin-bottom: 20px; */
+    padding: 10px 0;
+}
+
+#system-notes-container h3 {
+    color: #a0522d; /* 柔和的棕橘色 (Sienna) */
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 15px;
+    padding-bottom: 5px;
+    border-bottom: 2px solid #deb887; /* 淺色分隔線 */
+}
+
+.static-notes-box {
+    /* 使用一個非常淺的背景色，作為背景補充信息 */
+    background-color: #fcf8e3; /* 淺黃色/淺米色，提示資訊區塊 */
+    border: 1px solid #faebcc; /* 柔和邊框 */
+    padding: 15px;
+    border-radius: 8px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #555;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); /* 輕微陰影 */
+}
+
+.static-notes-box p {
+    margin: 5px 0;
+}
+
+.static-notes-box strong {
+    color: #cc5500; /* 使用深橘色強調關鍵詞 */
+}
+
+a {
+    color: #7f7f7f;
+    text-decoration: none;
+}
+
 @keyframes slideIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }

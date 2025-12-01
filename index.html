@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>分科測驗近三年資料</title>
+    <title>分科測驗篩選標準及歷年分數</title>
+    <meta name="description" content="分科測驗篩選標準及歷年分數">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
         <header class="header">
-            <h1>分科測驗近三年資料</h1>
+            <h1>分科測驗篩選標準及歷年分數</h1>
         </header>
 
         <div class="controls">
@@ -26,6 +27,14 @@
 
         <div class="results">
             <p class="initial-prompt">請在上方選擇 學校 與 科系 以查詢資料。</p>
+        </div>
+
+        <div id="system-notes-container">
+            <div class="static-notes-box">
+                <p><strong>資料來源 <span style="font-weight: 900;">▸</span> </strong><a href="https://www.uac.edu.tw">大學考試入學分發委員會</a></p>
+                <p><strong>學測數學 <span style="font-weight: 900;">▸</span> </strong>當數A及數B兩個標準同時出現時代表其中一個達標即可</p>
+                <p><strong>達標佔比 <span style="font-weight: 900;">▸</span> </strong>估算的。找的是 [加權平均 x 科目倍數] 向上取整後，成績 ≧ 這個分數的人數累積百分比，實際達標的比例應該要比這個比例高一點</p>
+            </div>
         </div>
     </div>
 
