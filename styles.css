@@ -103,10 +103,6 @@ body {
     /* margin-bottom: 25px; */
 }
 
-.criteria-row-display {
-    /* margin-bottom: 5px; */
-}
-
 h5 {
     color: #333;
     font-size: 15px;
@@ -247,4 +243,119 @@ h5 {
 
 .static-notes-box a {
     color: #7f9590; 
+}
+
+/* ======================================================= */
+/* 6. 響應式設計 (手機適配) */
+/* ======================================================= */
+
+@media (max-width: 768px) {
+    /* --- 6.1 基礎佈局調整 --- */
+    
+    body {
+        padding: 10px; /* 減少 body 的邊距 */
+    }
+
+    .container {
+        padding: 20px; /* 減少 container 的內部留白 */
+        border-radius: 0; /* 移除圓角，讓內容填滿螢幕 */
+        box-shadow: none; /* 移除陰影，提升性能 */
+    }
+
+    /* 頂部標題 */
+    .container h1 {
+        font-size: 28px;
+    }
+
+    .container p.description {
+        font-size: 14px;
+        margin-bottom: 20px;
+    }
+    
+    /* --- 6.2 選單堆疊 --- */
+    
+    .selector-group {
+        flex-direction: column; /* 🌟 關鍵：將選單從並排改為垂直堆疊 */
+        gap: 15px; /* 調整垂直間距 */
+        padding: 15px 0;
+        margin-bottom: 30px;
+    }
+
+    .selector-group select {
+        flex-grow: unset; /* 移除 flex-grow */
+        width: 100%; /* 讓選單佔滿整行 */
+        padding: 10px;
+        box-sizing: border-box; /* 確保 padding 不會導致寬度溢出 */
+    }
+
+    /* --- 6.3 結果區塊與卡片優化 --- */
+
+    .results h2 {
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+
+    /* 115年最新標準區塊 */
+    .current-criteria-box {
+        padding: 20px; /* 減少內部留白 */
+        margin-bottom: 30px;
+    }
+
+    .current-criteria-box .box-title {
+        font-size: 20px;
+        margin-bottom: 15px;
+    }
+    
+    h5 {
+        font-size: 14px;
+        padding-left: 6px; /* 縮小左側標記的間距 */
+    }
+
+    /* 數據標籤微調 */
+    .data-tag {
+        /* 在小螢幕上，標籤保持緊湊 */
+        /* 由於 data-tag 本身 margin-right 已經是 0，這裡不需要額外設置 */
+        /* 但我們可以確保它們能夠正常換行 */
+        white-space: normal;
+        display: block; /* 讓每個標籤獨佔一行，如果內容太長 */
+    }
+    
+    .data-separator {
+        display: none; /* 在手機上移除分隔符，或調整為極小 */
+        /* 🌟 由於標籤可能會堆疊，分隔符可能顯得怪異，可以考慮隱藏 */
+    }
+
+    /* 歷史數據卡片 */
+    .historical-entry-box {
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+
+    .history-year-title {
+        font-size: 16px;
+        padding-left: 8px;
+    }
+
+    /* 詳細數據標籤 (錄取人數, 分數, 比例) */
+    .history-row-details {
+        gap: 10px; /* 縮小標籤間距 */
+    }
+
+    .detail-tag {
+        font-size: 13px;
+        padding: 6px 12px;
+        /* 讓標籤可以分成兩行，避免溢出 */
+        flex-basis: auto; 
+    }
+    
+    /* 靜態備註區塊 */
+    #system-notes-container {
+        margin-top: 30px;
+        padding-top: 20px;
+    }
+    
+    .static-notes-box {
+        padding: 15px;
+        font-size: 13px;
+    }
 }
