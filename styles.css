@@ -360,3 +360,8 @@ h5 {
         font-size: 13px;
     }
 }
+
+#system-notes-container p {
+    border-left: 2px solid #979b9a; /* 左側柔和綠色小標記 */
+    padding-left: 5px;
+}
