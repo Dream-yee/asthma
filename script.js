@@ -395,7 +395,7 @@ function searchDepartments(query) {
     results.sort((a, b) => b.score - a.score);
 
     // 4. 顯示建議
-    displaySuggestions(results.slice(0, 50)); // 只顯示前 50 個結果
+    displaySuggestions(results.slice(0, 200)); // 只顯示前 200 個結果
 }
 
 
