@@ -454,6 +454,9 @@ if (searchIconButton) {
  */
 function openSpotlight() {
     spotlightOverlay.style.display = 'flex';
+    spotlightOverlay.addEventListener('click', () => {
+        closeSpotlight();
+    })
     spotlightInput.focus();
     spotlightInput.value = '';
     spotlightSuggestions.innerHTML = '';
