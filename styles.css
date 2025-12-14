@@ -70,6 +70,27 @@ body {
     outline: none;
 }
 
+/* 🌟 搜尋圖示按鈕樣式 🌟 */
+#search-icon-button {
+    /* 重設按鈕樣式 */
+    /* flex-grow: 1; */
+    padding: 10px 20px;
+    border: 1px solid;
+    border-color: #ddd; /* 柔和鼠尾草綠 */
+    border-radius: 4px;
+    font-size: 16px;
+    appearance: none;
+    background-color: #fff;
+    cursor: pointer;
+    transition: border-color 0.5s;
+    font-weight: bold;
+}
+
+#search-icon-button:hover {
+    border-color: #55A692; /* 柔和鼠尾草綠 */
+    outline: none;
+}
+
 /* ======================================================= */
 /* 2. 結果顯示區塊 (.results) */
 /* ======================================================= */
@@ -364,4 +385,105 @@ h5 {
 #system-notes-container p {
     border-left: 2px solid #979b9a; /* 左側柔和綠色小標記 */
     padding-left: 5px;
+}
+
+/* ======================================================= */
+/* 8. 懸浮搜尋系統 (Spotlight Style) */
+/* ======================================================= */
+
+#spotlight-overlay {
+    /* 遮罩層：讓背景變暗並阻擋點擊 */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* 半透明黑色背景 */
+    backdrop-filter: blur(5px); /* 輕微模糊背景 */
+    z-index: 2000;
+    
+    display: none; /* 預設隱藏，等待 F 鍵觸發 */
+    
+    /* 垂直置中 */
+    /* display: flex; */
+    justify-content: center;
+    align-items: flex-start; /* 讓它靠近頂部，但不是正中央 */
+    padding-top: 10vh; /* 從頂部開始 10% */
+}
+
+#spotlight-search-box {
+    width: 650px;
+    max-width: 90%;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    overflow: hidden; /* 隱藏 suggestion 的邊界 */
+    transition: all 0.2s ease-out;
+}
+
+#spotlight-input {
+    width: 100%;
+    padding: 15px 20px;
+    font-size: 18px;
+    border: none;
+    outline: none;
+    box-sizing: border-box;
+}
+
+#spotlight-suggestions {
+    max-height: 400px; /* 限制建議列表的最大高度 */
+    overflow-y: auto; /* 超出高度時可捲動 */
+}
+
+/* 建議項目樣式 */
+.suggestion-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-top: 1px solid #eeeeee;
+    transition: background-color 0.2s;
+    font-size: 15px;
+}
+
+.suggestion-item:hover,
+.suggestion-item.active { /* 'active' 類別用於鍵盤導航選中時 */
+    background-color: #e5f0ff; /* 淺藍色高亮 */
+    color: #000000;
+}
+
+.suggestion-item .dept-name {
+    font-weight: 600;
+}
+
+.suggestion-item .uni-name {
+    color: #666;
+    font-size: 13px;
+}
+
+/* --- 黑夜模式適配 --- */
+body.dark-mode #spotlight-search-box {
+    background-color: #2a2a2a;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+}
+
+body.dark-mode #spotlight-input {
+    background-color: #2a2a2a;
+    color: #f0f0f0;
+}
+
+body.dark-mode .suggestion-item {
+    border-top-color: #333333;
+    color: #d0d0d0;
+}
+
+body.dark-mode .suggestion-item .uni-name {
+    color: #999;
+}
+
+body.dark-mode .suggestion-item:hover,
+body.dark-mode .suggestion-item.active {
+    background-color: #3e3e3e; 
+    color: #f0f0f0;
 }

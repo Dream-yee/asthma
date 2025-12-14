@@ -30,6 +30,8 @@ async function loadData() {
         populateUniversities();
         // 綁定事件監聽器
         addEventListeners();
+        // 搜尋預備
+        flattenData(schoolData)
         
     } catch (error) {
         resultsDiv.innerHTML = `<p class="error-message">載入資料失敗：${error.message}</p>`;
@@ -305,6 +307,190 @@ function displayResults() {
     // --- 4. 顯示結果 ---
     resultsDiv.innerHTML = html;
 }
+
+// ---- 搜尋系統 -----
+const spotlightOverlay = document.getElementById('spotlight-overlay');
+const spotlightInput = document.getElementById('spotlight-input');
+const spotlightSuggestions = document.getElementById('spotlight-suggestions');
+
+let flattenedSchoolData = []; // 扁平化後的 [{uni: '...', dept: '...'}] 結構
+
+/**
+ * 1. 扁平化數據：將巢狀的 schoolData 轉為單一陣列，方便搜尋。
+ * @param {Object} data - historical_result.json 內容
+ */
+function flattenData(data) {
+    if (!data) return;
+    flattenedSchoolData = [];
+    for (const university in data) {
+        for (const department in data[university]) {
+            flattenedSchoolData.push({
+                uni: university,
+                dept: department
+                // 如果需要，可以在這裡加入代號等其他資訊
+            });
+        }
+    }
+    console.log(`已扁平化 ${flattenedSchoolData.length} 個校系記錄，準備搜尋。`);
+}
+
+/**
+ * 2. 核心搜尋邏輯：分級匹配
+ * @param {string} query - 使用者輸入的搜尋字詞
+ */
+function searchDepartments(query) {
+    const trimmedQuery = query.trim();
+    if (trimmedQuery.length === 0) {
+        spotlightSuggestions.innerHTML = '';
+        return;
+    }
+
+    // 將查詢拆分為多個關鍵字 (以空格分隔)
+    const keywords = trimmedQuery.toLowerCase().split(/\s+/).filter(k => k.length > 0);
+
+    const results = [];
+    
+    // 遍歷扁平化數據進行匹配
+    flattenedSchoolData.forEach(item => {
+        const uniLower = item.uni.toLowerCase();
+        const deptLower = item.dept.toLowerCase();
+        const fullText = (uniLower + deptLower).toLowerCase(); // 學校+科系完整字串
+
+        let score = 0; // 用於分級
+
+        // 計算分數：分數越高，匹配度越高
+
+        // A. 嚴格符合 (最高分: 100+)
+        // 1. 科系名稱完全包含所有關鍵字 (AND 條件)
+        const allKeywordsInDept = keywords.every(k => deptLower.includes(k));
+        if (allKeywordsInDept) {
+             // 額外分數：如果第一個關鍵字出現在開頭，分數更高
+            score += 100; 
+            if (deptLower.startsWith(keywords[0])) score += 20;
+        }
+
+        // B. 寬鬆符合 (中等分: 50+)
+        // 2. 學校名稱 + 科系名稱 包含所有關鍵字 (AND 條件)
+        const allKeywordsInFullText = keywords.every(k => fullText.includes(k));
+        if (allKeywordsInFullText && score < 100) {
+            score += 50;
+        }
+        
+        // C. 部分符合 (低分: 10+)
+        // 3. 學校或科系名稱包含任一關鍵字 (OR 條件)
+        const anyKeywordMatch = keywords.some(k => deptLower.includes(k) || uniLower.includes(k));
+        if (anyKeywordMatch && score < 50) {
+            score += 10;
+        }
+        
+        // 4. 科系名稱的縮寫匹配 (例如: '中文系' 匹配 '中國文學系')
+        // 這裡可以加入更複雜的縮寫邏輯，但暫時只用包含判斷。
+
+        if (score > 0) {
+            results.push({ item, score });
+        }
+    });
+
+    // 3. 排序結果：依分數由高到低
+    results.sort((a, b) => b.score - a.score);
+
+    // 4. 顯示建議
+    displaySuggestions(results.slice(0, 50)); // 只顯示前 50 個結果
+}
+
+
+/**
+ * 3. 顯示結果到 HTML
+ * @param {Array<Object>} results - 排序後的搜尋結果
+ */
+function displaySuggestions(results) {
+    spotlightSuggestions.innerHTML = '';
+    
+    if (results.length === 0) {
+        spotlightSuggestions.innerHTML = '<div class="suggestion-item">找不到相關校系。</div>';
+        return;
+    }
+
+    results.forEach((result) => {
+        const item = result.item;
+        const div = document.createElement('div');
+        div.classList.add('suggestion-item');
+
+        // 點擊事件：跳轉到該校系
+        div.addEventListener('click', () => {
+            // 這裡您可以觸發您原本選單的 change event，或直接導向該校系的頁面
+            console.log(`選擇了: ${item.uni} - ${item.dept}`);
+            universitySelect.value = item.uni;
+            const url = new URL(window.location);
+            url.searchParams.set("school", item.uni);
+            url.searchParams.set("dept", item.dept);
+            history.pushState({}, "", url);
+            populateDepartments(item.uni);
+            closeSpotlight();
+        });
+
+        div.innerHTML = `
+            <span class="dept-name">${item.dept}</span>
+            <span class="uni-name">${item.uni}</span>
+        `;
+        spotlightSuggestions.appendChild(div);
+    });
+}
+
+// 取得新增的按鈕元素
+const searchIconButton = document.getElementById('search-icon-button');
+
+// 🌟 新增按鈕點擊事件監聽器 🌟
+if (searchIconButton) {
+    searchIconButton.addEventListener('click', () => {
+        // 呼叫開啟 Spotlight 搜尋的函數
+        openSpotlight();
+    });
+}
+
+
+/**
+ * 4. 控制 Spotlight 開啟/關閉
+ */
+function openSpotlight() {
+    spotlightOverlay.style.display = 'flex';
+    spotlightInput.focus();
+    spotlightInput.value = '';
+    spotlightSuggestions.innerHTML = '';
+    document.body.style.overflow = 'hidden'; // 鎖定背景捲動
+}
+
+function closeSpotlight() {
+    spotlightOverlay.style.display = 'none';
+    document.body.style.overflow = 'auto'; // 恢復背景捲動
+}
+
+
+/**
+ * 5. 事件監聽器：F 鍵觸發、Esc 鍵關閉、Input 變化
+ */
+document.addEventListener('keydown', (e) => {
+    // 檢查是否是 F 鍵 (不論大小寫)
+    if (e.key === 'f' || e.key === 'F') {
+        // 避免在 input 欄位中按 F 時重複觸發
+        const activeElement = document.activeElement.tagName;
+        if (activeElement !== 'INPUT' && activeElement !== 'TEXTAREA') {
+            e.preventDefault(); // 阻止瀏覽器預設的 'F' 搜尋功能
+            openSpotlight();
+        }
+    }
+    
+    // Esc 鍵關閉
+    if (e.key === 'Escape' && spotlightOverlay.style.display === 'flex') {
+        closeSpotlight();
+    }
+});
+
+// 輸入框內容變更時即時搜尋
+spotlightInput.addEventListener('input', (e) => {
+    searchDepartments(e.target.value);
+});
+
 // -----------------------------------------------------
 // 4. 事件監聽器
 // -----------------------------------------------------
