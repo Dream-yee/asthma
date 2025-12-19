@@ -419,12 +419,17 @@ function searchDepartments(query) {
 
     let main_unis = [];
     const dept_keywords = [];
-    for(const k of keywords) {
+    for(let k_origin of keywords) {
+        k = k_origin.replaceAll("台", "臺") // 可不可以規範一下，求求了
         if(schoolData[k])
             main_unis.push(k);
         else if (SCHOOL_ALIASES[k]) {
             main_unis = main_unis.concat(SCHOOL_ALIASES[k]);
-        } else dept_keywords.push(k);
+        } else {
+            dept_keywords.push(k);
+            if(k_origin.includes("台"))
+                dept_keywords.push(k_origin);
+        }
     }
     
     flattenedSchoolData.forEach(item => {
