@@ -524,8 +524,6 @@ function displaySuggestions(results) {
         return;
     }
 
-    let prev_option_uni = ""
-
     results.forEach((result) => {
         const item = result.item;
         const div = document.createElement('div');
@@ -544,16 +542,10 @@ function displaySuggestions(results) {
             closeSpotlight();
         });
 
-        if (item.uni === prev_option_uni){
-            div.innerHTML = `
-                <span class="dept-name"><span class="uni-name">${item.uni}</span> ${item.dept}</span>
-            `;
-        } else {
-            div.innerHTML = `
-                <span class="dept-name"><span class="uni-name-first">${item.uni}</span> ${item.dept}</span>
-            `;
-            prev_option_uni = item.uni;
-        }
+        div.innerHTML = `
+            <span class="dept-name">${item.dept}</span>
+            <span class="uni-name">${item.uni}</span>
+        `;
         spotlightSuggestions.appendChild(div);
     });
 }
