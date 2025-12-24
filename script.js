@@ -519,15 +519,26 @@ function searchDepartments(query) {
 function displaySuggestions(results) {
     spotlightSuggestions.innerHTML = '';
     
+    
     if (results.length === 0) {
         spotlightSuggestions.innerHTML = '<div class="suggestion-item">找不到相關校系。</div>';
         return;
     }
 
+    let lastUni = "";
+
     results.forEach((result) => {
         const item = result.item;
         const div = document.createElement('div');
         div.classList.add('suggestion-item');
+
+        if (item.uni !== lastUni) {
+            const headerDiv = document.createElement('div');
+            headerDiv.classList.add('uni-section-header');
+            headerDiv.textContent = item.uni;
+            spotlightSuggestions.appendChild(headerDiv);
+            lastUni = item.uni;
+        }
 
         // 點擊事件：跳轉到該校系
         div.addEventListener('click', () => {
@@ -544,7 +555,7 @@ function displaySuggestions(results) {
 
         div.innerHTML = `
             <span class="dept-name">${item.dept}</span>
-            <span class="uni-name">${item.uni}</span>
+            <!-- <span class="uni-name">${item.uni}</span> -->
         `;
         spotlightSuggestions.appendChild(div);
     });

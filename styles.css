@@ -433,6 +433,9 @@ h5 {
 #spotlight-suggestions {
     max-height: 400px; /* 限制建議列表的最大高度 */
     overflow-y: auto; /* 超出高度時可捲動 */
+    position: relative;
+    max-height: 400px;
+    /* 必須確保沒有 overflow: hidden 在父層干擾 sticky */
 }
 
 /* 建議項目樣式 */
@@ -460,6 +463,32 @@ h5 {
 .suggestion-item .uni-name {
     color: #666;
     font-size: 13px;
+}
+
+/* 大學區段標頭樣式 */
+.uni-section-header {
+    /* 🌟 核心屬性：黏性定位 */
+    position: sticky;
+    top: 0; /* 卡在建議列表的最頂端 */
+    
+    background-color: #f8f9fa; /* 輕微的灰色背景 */
+    padding: 8px 20px;
+    font-size: 13px;
+    font-weight: bold;
+    color: #8b8b8b; /* 使用你的綠色主題色 */
+    border-bottom: 1px solid #e0e0e0;
+    z-index: 10; /* 確保標頭在建議項目之上 */
+    
+    /* 輕微的磨砂玻璃效果 (可選) */
+    backdrop-filter: blur(5px);
+    background-color: rgba(248, 249, 250, 0.9);
+}
+
+/* 黑夜模式適配 */
+body.dark-mode .uni-section-header {
+    background-color: rgba(45, 45, 45, 0.95);
+    color: #64FFDA;
+    border-bottom-color: #444;
 }
 
 /* --- 黑夜模式適配 --- */
