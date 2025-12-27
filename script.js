@@ -629,6 +629,78 @@ spotlightInput.addEventListener('mouseout', (e) => {
     mouseOnSpotlight = false;
 });
 
+// 取得新增的按鈕元素
+const GSATInputButton = document.getElementById('gsat-button');
+
+// 🌟 新增按鈕點擊事件監聽器 🌟
+if (GSATInputButton) {
+    GSATInputButton.addEventListener('click', () => {
+        // 呼叫開啟 Spotlight 搜尋的函數
+        toggleScoreIsland();
+    });
+}
+
+const scoreIsland = document.getElementById('score-island-container');
+const scoreInputs = document.querySelectorAll('.input-unit input');
+
+// 1. 切換顯示/隱藏
+function toggleScoreIsland() {
+    scoreIsland.classList.toggle('island-visible');
+    if (scoreIsland.classList.contains('island-visible')) {
+        // auto focus after turn on the island.
+        // set timeout is necessary, stupid js.
+        setTimeout(() => document.getElementById("score-chi").focus(), 100);
+    }
+}
+
+// 2. 自動跳轉邏輯
+scoreInputs.forEach((input, index) => {
+    input.addEventListener('input', (e) => {
+        const value = e.target.value;
+        
+        // 如果輸入超過 15 (級分上限)，自動修正為 15
+        if (parseInt(value) > 60) {
+            e.target.value = "60";
+        }
+
+        // 🌟 自動跳轉：如果輸入兩位數，或者輸入的是 7-9 之間的個位數 (因為級分不超過 60)
+        if (value.length >= 2 || (parseInt(value) >= 7 && parseInt(value) <= 9)) {
+            if (index < scoreInputs.length - 1) {
+                scoreInputs[index + 1].focus();
+            }
+        }
+    });
+
+    // 支援 Backspace 刪除後跳回前一格
+    input.addEventListener('keydown', (e) => {
+        if (e.key === 'Backspace' && e.target.value === '') {
+            if (index > 0) {
+                scoreInputs[index - 1].focus();
+            }
+        }
+    });
+});
+
+// 3. 鍵盤 G 觸發
+document.addEventListener('keydown', (e) => {
+    const activeElement = document.activeElement.tagName;
+    if (activeElement !== 'INPUT' && activeElement !== 'TEXTAREA') {
+        if (e.key === 'g' || e.key === 'G') {
+            e.preventDefault();
+            toggleScoreIsland();
+        }
+    }
+    
+    if (e.key === 'Escape') {
+        scoreIsland.classList.remove('island-visible');
+    }
+});
+
+// 關閉按鈕
+document.getElementById('island-close-btn').addEventListener('click', () => {
+    scoreIsland.classList.remove('island-visible');
+});
+
 // -----------------------------------------------------
 // 4. 事件監聽器
 // -----------------------------------------------------

@@ -71,7 +71,7 @@ body {
 }
 
 /* 🌟 搜尋圖示按鈕樣式 🌟 */
-#search-icon-button {
+.btn-search-icon {
     /* 重設按鈕樣式 */
     /* flex-grow: 1; */
     padding: 10px 20px;
@@ -86,9 +86,15 @@ body {
     font-weight: bold;
 }
 
-#search-icon-button:hover {
+.btn-search-icon:hover {
     border-color: #55A692; /* 柔和鼠尾草綠 */
     outline: none;
+}
+
+#search-icon-button {
+}
+
+#search-icon-button:hover {
 }
 
 /* ======================================================= */
@@ -550,4 +556,110 @@ body.dark-mode .suggestion-item.active {
     opacity: 0;
     transform: translateY(10px);
     transition: opacity 0.2s ease-in, transform 0.2s ease-in;
+}
+
+/* ======================================================= */
+/* 10. 動態島成績列 (Dynamic Island Style) */
+/* ======================================================= */
+
+#score-island-container {
+    position: fixed;
+    top: 20px; /* 距離頂部一點距離，產生懸浮感 */
+    left: 50%;
+    transform: translateX(-50%) scale(0.8); /* 初始縮小 */
+    z-index: 300;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.28); /* 彈性動畫 */
+}
+
+#score-island-container.island-visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) scale(1);
+}
+
+.score-island {
+    background-color: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(15px); /* 磨砂玻璃 */
+    padding: 10px 25px;
+    border-radius: 50px; /* 膠囊形狀 */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.island-label {
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+    white-space: nowrap;
+}
+
+.score-inputs-group {
+    display: flex;
+    gap: 8px;
+}
+
+/* 隱藏 Input 的上下拉桿 (Spinners) */
+.input-unit input {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%; /* 圓形輸入框 */
+    border: 1px solid rgba(0,0,0,0.1);
+    text-align: center;
+    font-size: 16px;
+    font-weight: 600;
+    background: rgba(255,255,255,0.5);
+    outline: none;
+    transition: all 0.2s;
+    /* 移除箭頭 */
+    -moz-appearance: textfield;
+}
+
+.input-unit input::-webkit-outer-spin-button,
+.input-unit input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.input-unit input:focus {
+    border-color: #55A692;
+    background: #fff;
+    box-shadow: 0 0 8px rgba(76, 175, 80, 0.3);
+    transform: scale(1.1);
+}
+
+#island-close-btn {
+    background: rgba(0,0,0,0.05);
+    border: none;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 12px;
+    color: #666;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+#island-close-btn:hover {
+    background: rgba(255, 0, 0, 0.1);
+    color: #ff4444;
+}
+
+/* 黑夜模式 */
+body.dark-mode .score-island {
+    background-color: rgba(30, 30, 30, 0.8);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+body.dark-mode .island-label { color: #eee; }
+body.dark-mode .input-unit input {
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+    border-color: rgba(255,255,255,0.1);
 }

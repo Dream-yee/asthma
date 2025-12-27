@@ -7,6 +7,32 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <div id="score-island-container" class="island-hidden">
+        <div class="score-island">
+            <div class="island-label">學測成績輸入</div>
+            <div class="score-inputs-group">
+                <div class="input-unit">
+                    <input type="number" id="score-chi" placeholder="國" maxlength="2">
+                </div>
+                <div class="input-unit">
+                    <input type="number" id="score-eng" placeholder="英" maxlength="2">
+                </div>
+                <div class="input-unit">
+                    <input type="number" id="score-mathA" placeholder="數A" maxlength="2">
+                </div>
+                <div class="input-unit">
+                    <input type="number" id="score-mathB" placeholder="數B" maxlength="2">
+                </div>
+                <div class="input-unit">
+                    <input type="number" id="score-sci" placeholder="自" maxlength="2">
+                </div>
+                <div class="input-unit">
+                    <input type="number" id="score-soc" placeholder="社" maxlength="2">
+                </div>
+            </div>
+            <button id="island-close-btn">✕</button>
+        </div>
+    </div>
     <div class="container">
         <header class="header">
             <h1>分科測驗校系標準及分數</h1>
@@ -17,6 +43,9 @@
             <select id="department-select"></select>
             <button id="search-icon-button" class="btn-search-icon" aria-label="開啟快速搜尋 (S)">
                 輸入搜尋
+            </button>
+            <button id="gsat-button" class="btn-search-icon" aria-label="輸入學測分數 (G)">
+                輸入學測分數
             </button>
         </div>
 
