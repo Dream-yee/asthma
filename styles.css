@@ -579,6 +579,10 @@ body.dark-mode .suggestion-item.active {
     transform: translateX(-50%) scale(1);
 }
 
+#score-island-container p {
+    margin: 0;
+}
+
 .score-island {
     background-color: rgba(255, 255, 255, 0.85);
     backdrop-filter: blur(15px); /* 磨砂玻璃 */
@@ -659,7 +663,7 @@ body.dark-mode .suggestion-item.active {
     #score-island-container {
         /* 🌟 改為靠右側垂直置中 */
         top: 50%;
-        right: 15px;
+        right: 0px;
         left: auto;
         transform: translateY(-50%) scale(0.8);
         width: auto;
@@ -672,9 +676,9 @@ body.dark-mode .suggestion-item.active {
     .score-island {
         flex-direction: column; /* 改為垂直排列 */
         padding: 15px 10px;
-        border-radius: 40px; /* 保持長膠囊感 */
+        border-radius: 40px 0 0 40px; /* 保持長膠囊感 */
         gap: 12px;
-        width: 60px; /* 固定寬度，讓它看起來像側邊欄 */
+        width: 40px; /* 固定寬度，讓它看起來像側邊欄 */
     }
 
     .island-label {
@@ -715,7 +719,7 @@ body.dark-mode .suggestion-item.active {
 #fab-container {
     position: fixed;
     bottom: 30px;
-    right: 30px;
+    right: 0;
     display: flex;
     flex-direction: column; /* 垂直排列 */
     gap: 15px; /* 按鈕間距 */
@@ -723,9 +727,9 @@ body.dark-mode .suggestion-item.active {
 }
 
 .fab-button {
-    width: 56px;
-    height: 56px;
-    border-radius: 50%;
+    width: 46px;
+    height: 46px;
+    border-radius: 50% 0 0 50%;
     background-color: rgba(255, 255, 255, 0.8);
     backdrop-filter: blur(10px); /* 磨砂玻璃感 */
     border: 1px solid rgba(255, 255, 255, 0.3);
@@ -738,7 +742,7 @@ body.dark-mode .suggestion-item.active {
 }
 
 .fab-icon {
-    font-size: 20px;
+    font-size: 15px;
     font-weight: bold;
     color: #333;
     transition: color 0.3s;
@@ -752,6 +756,20 @@ body.dark-mode .suggestion-item.active {
 
     #fab-spotlight:hover {
         background-color: #55A692; /* 搜尋按鈕主題色 (或維持一致的綠色) */
+    }
+
+    #fab-container{
+        right: 30px;
+
+    }
+
+    .fab-button {
+        border-radius: 50%;
+        width: 56px;
+        height: 56px;
+    }
+    .fab-icon {
+        font-size: 20px;
     }
 
     .fab-button:hover {
