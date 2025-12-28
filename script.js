@@ -475,6 +475,11 @@ function searchDepartments(query) {
                 matchType = 'partial';
             }
 
+            // 校系
+            if(uniLower.includes(k)) {
+                matchType = "school_partial"
+            }
+
             // C. 科系別名檢查 (例如輸入 "資工")
             if (DEPT_ALIASES[k]) {
                 const requirements = DEPT_ALIASES[k];
@@ -510,6 +515,9 @@ function searchDepartments(query) {
 
             // 獎勵：沒有對學校鎖定的匹配別名 (給予跟直接符合差不多的高分)
             if (keywordMatches.includes('dept_alias')) score += 30;
+
+            // 學校有要先出
+            if (keywordMatches.includes('school_partial')) score += 60;
 
             // 獎勵：字串開頭符合
             // if (deptLower.startsWith(keywords[0]) || uniLower.startsWith(keywords[0])) {
@@ -679,7 +687,7 @@ function toggleScoreIsland() {
 
 // 2. 自動跳轉邏輯
 scoreInputs.forEach((input, index) => {
-    
+
     input.addEventListener('focus', (e) => {
         // 🌟 確保輸入框在手機鍵盤彈出時不會被遮擋
         if (window.innerWidth < 600) {
