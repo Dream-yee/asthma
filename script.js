@@ -295,6 +295,7 @@ function displayResults() {
                 const criteria = record["科目倍數"] || {};
                 const spots = record["錄取人數"];
                 const standard = record["一般考生錄取標準"];
+                const standard_origin = record["一般考生錄取標準總分"]
                 const percentage = record["達標比例"];
                 const deptName = record["校系名稱"]; // 舊系名追溯
                 
@@ -306,6 +307,8 @@ function displayResults() {
                     .map(([subject, multiplier]) => 
                         `<span class="data-tag multiplier-tag">${subject} <b>${(parseFloat(multiplier) || 0)}</b></span>`
                     ).join('<span class="data-separator">|</span>'); 
+
+                
 
                 // 輸出單筆歷史記錄
                 html += `
@@ -599,7 +602,7 @@ function closeSpotlight() {
  */
 document.addEventListener('keydown', (e) => {
     // 檢查是否是 F 鍵 (不論大小寫)
-    if (e.key === 's' || e.key === 'S' || e.key === 'ㄋ') {
+    if (e.key === 'f' || e.key === 'F' || e.key === 'ㄑ') {
         // 避免在 input 欄位中按 F 時重複觸發
         const activeElement = document.activeElement.tagName;
         if (activeElement !== 'INPUT' && activeElement !== 'TEXTAREA') {
