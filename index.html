@@ -41,12 +41,12 @@
         <div class="selector-group">
             <select id="university-select"></select>
             <select id="department-select"></select>
-            <button id="search-icon-button" class="btn-search-icon" aria-label="開啟快速搜尋 (S)">
+            <!-- <button id="search-icon-button" class="btn-search-icon" aria-label="開啟快速搜尋 (S)">
                 輸入搜尋
             </button>
             <button id="gsat-button" class="btn-search-icon" aria-label="輸入學測分數 (G)">
                 輸入學測分數
-            </button>
+            </button> -->
         </div>
 
     <div id="results-display" class="results"></div>
@@ -67,6 +67,15 @@
             <div id="spotlight-suggestions">
                 </div>
         </div>
+    </div>
+
+    <div id="fab-container">
+        <button id="fab-gsat" class="fab-button" title="輸入學測成績 (G)">
+            <span class="fab-icon">學測</span>
+        </button>
+        <button id="fab-spotlight" class="fab-button" title="快速搜尋 (F)">
+            <span class="fab-icon">搜尋</span>
+        </button>
     </div>
 
     <script src="script.js"></script> 

@@ -295,7 +295,6 @@ function displayResults() {
                 const criteria = record["科目倍數"] || {};
                 const spots = record["錄取人數"];
                 const standard = record["一般考生錄取標準"];
-                const standard_origin = record["一般考生錄取標準總分"]
                 const percentage = record["達標比例"];
                 const deptName = record["校系名稱"]; // 舊系名追溯
                 
@@ -308,7 +307,26 @@ function displayResults() {
                         `<span class="data-tag multiplier-tag">${subject} <b>${(parseFloat(multiplier) || 0)}</b></span>`
                     ).join('<span class="data-separator">|</span>'); 
 
+                // 扣掉學測
+                let GSAT_modifier = record["一般考生錄取標準總分"]
+                // console.log(GSAT_modifier); 
                 
+                let times_left = Object.values(criteria).reduce((a, b) => a+b, 0);
+                for(const [k, v] of Object.entries(GSATScores)) {
+                    if(criteria[k] !== undefined) {
+                        GSAT_modifier -= criteria[k] * (v === "" ? 0 : v);
+                        times_left -= criteria[k];
+                    }
+                }
+                let htmlPersonalData = "";
+                let GSAT_modifier_ave = Number.parseFloat(GSAT_modifier / times_left).toFixed(2);
+                if(GSAT_modifier !== record["一般考生錄取標準總分"]) {
+                    htmlPersonalData = `
+                        <span class="detail-tag">
+                            你分科所需: <b>${GSAT_modifier_ave}</b>
+                        </span>
+                    `
+                }
 
                 // 輸出單筆歷史記錄
                 html += `
@@ -324,7 +342,7 @@ function displayResults() {
                             
                             ${standard !== undefined ? 
                                 `<span class="detail-tag">
-                                    加權平均分數: <b>${standard}</b>
+                                    加權平均: <b>${standard}</b>
                                 </span>` : ''
                             }
 
@@ -333,6 +351,7 @@ function displayResults() {
                                     達標考生佔比: <b>${percentage}%</b>
                                 </span>` : ''
                             }
+                            ${htmlPersonalData}
                         </div>
                     </div>
                 `;
@@ -674,6 +693,7 @@ scoreInputs.forEach((input, index) => {
                 scoreInputs[index + 1].focus();
             }
         }
+        displayResults();
     });
 
     // 支援 Backspace 刪除後跳回前一格
@@ -682,6 +702,7 @@ scoreInputs.forEach((input, index) => {
             if (index > 0) {
                 scoreInputs[index - 1].focus();
             }
+            displayResults();
         }
     });
 });
@@ -690,7 +711,7 @@ scoreInputs.forEach((input, index) => {
 document.addEventListener('keydown', (e) => {
     const activeElement = document.activeElement.tagName;
     if (activeElement !== 'INPUT' && activeElement !== 'TEXTAREA') {
-        if (e.key === 'g' || e.key === 'G') {
+        if (e.key === 'g' || e.key === 'G' || e.key === 'ㄕ') {
             e.preventDefault();
             toggleScoreIsland();
         }
@@ -736,6 +757,26 @@ function addEventListeners() {
             // 如果選單被重置回 "-- 請選擇科系 --"
             resultsDiv.innerHTML = `<p class="initial-prompt">請選擇校系以查詢資料</p>`;
         }
+    });
+}
+
+// 取得懸浮按鈕元素
+const fabSpotlight = document.getElementById('fab-spotlight');
+const fabGsat = document.getElementById('fab-gsat');
+
+// 1. 點擊開啟搜尋系統 (Spotlight)
+if (fabSpotlight) {
+    fabSpotlight.addEventListener('click', (e) => {
+        e.stopPropagation(); // 防止事件冒泡
+        openSpotlight(); // 執行之前定義好的開啟函數
+    });
+}
+
+// 2. 點擊開啟成績輸入 (Dynamic Island)
+if (fabGsat) {
+    fabGsat.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleScoreIsland(); // 執行之前定義好的切換函數
     });
 }
 

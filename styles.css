@@ -570,7 +570,7 @@ body.dark-mode .suggestion-item.active {
     z-index: 300;
     opacity: 0;
     visibility: hidden;
-    transition: all 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.28); /* 彈性動畫 */
+    transition: all 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.28);
 }
 
 #score-island-container.island-visible {
@@ -650,6 +650,71 @@ body.dark-mode .suggestion-item.active {
 #island-close-btn:hover {
     background: rgba(255, 0, 0, 0.1);
     color: #ff4444;
+}
+
+/* ======================================================= */
+/* 11. 懸浮按鈕 (FAB) 樣式 */
+/* ======================================================= */
+
+#fab-container {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    display: flex;
+    flex-direction: column; /* 垂直排列 */
+    gap: 15px; /* 按鈕間距 */
+    z-index: 500;
+}
+
+.fab-button {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px); /* 磨砂玻璃感 */
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.fab-button:hover {
+    transform: scale(1.1) translateY(-5px);
+    background-color: #4CAF50; /* 懸停時變綠色 */
+    box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
+}
+
+.fab-icon {
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+    transition: color 0.3s;
+}
+
+.fab-button:hover .fab-icon {
+    color: #ffffff; /* 懸停時圖標變白 */
+}
+
+/* 針對特定按鈕的顏色微調 (可選) */
+#fab-gsat:hover {
+    background-color: #4CAF50; /* 成績按鈕主題色 */
+}
+
+#fab-spotlight:hover {
+    background-color: #2196F3; /* 搜尋按鈕主題色 (或維持一致的綠色) */
+}
+
+/* --- 黑夜模式 --- */
+body.dark-mode .fab-button {
+    background-color: rgba(45, 45, 45, 0.8);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .fab-icon {
+    color: #eee;
 }
 
 /* 黑夜模式 */
