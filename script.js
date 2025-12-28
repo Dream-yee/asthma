@@ -679,6 +679,14 @@ function toggleScoreIsland() {
 
 // 2. 自動跳轉邏輯
 scoreInputs.forEach((input, index) => {
+    
+    input.addEventListener('focus', (e) => {
+        // 🌟 確保輸入框在手機鍵盤彈出時不會被遮擋
+        if (window.innerWidth < 600) {
+            e.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    });
+
     input.addEventListener('input', (e) => {
         const value = e.target.value;
 
