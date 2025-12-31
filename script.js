@@ -323,7 +323,7 @@ function displayResults() {
                 if(GSAT_modifier !== record["一般考生錄取標準總分"]) {
                     htmlPersonalData = `
                         <span class="detail-tag">
-                            你分科所需: <b>${GSAT_modifier_ave}</b>
+                            你分科所需: <b ${GSAT_modifier_ave > 60 ? `class="impossible"` : ""}>${GSAT_modifier_ave}</b>
                         </span>
                     `
                 }
