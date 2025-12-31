@@ -659,10 +659,10 @@ body.dark-mode .suggestion-item.active {
 /* 12. GSAT Island 側邊懸浮設計 (Mobile Side-Docked) */
 /* ======================================================= */
 
-@media (max-width: 600px) {
+@media (max-width: 768px) {
     #score-island-container {
         /* 🌟 改為靠右側垂直置中 */
-        top: 50%;
+        top: 45%;
         right: 0px;
         left: auto;
         transform: translateY(-50%) scale(0.8);
@@ -718,7 +718,7 @@ body.dark-mode .suggestion-item.active {
 
 #fab-container {
     position: fixed;
-    bottom: 30px;
+    bottom: 10%;
     right: 0;
     display: flex;
     flex-direction: column; /* 垂直排列 */
