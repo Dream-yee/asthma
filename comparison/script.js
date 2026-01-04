@@ -5,6 +5,15 @@ const resultsList = document.getElementById('results-list');
 let schoolData = {};
 let searchEngine;
 
+const GUESSING = [
+    "物理治療 職能治療",
+    "頂大 光電 物理 材料",
+    "成大 中央 太空 地科",
+    "四中 師北海 電機 資工",
+    "台大 東吳 中正 法律",
+    
+]
+
 async function loadData() {
     try {
         const response = await fetch('../datas/historical_result.json');
@@ -14,6 +23,7 @@ async function loadData() {
         schoolData = await response.json();
         searchEngine = await import("../js_utils/search_engine.js");
         searchEngine.flattenData(schoolData)
+
     } catch (error) {
         console.error("載入資料時發生錯誤:", error);
     }
@@ -53,15 +63,23 @@ function renderComparisonResults(results) {
         const currentData = schoolData[item.uni][item.dept][CURRENT_YEAR];
         
         // 準備 114, 113 的詳細輔助 HTML
-        const historyYears = TARGET_YEARS.filter(y => y !== CURRENT_YEAR);
+        let historyYears = TARGET_YEARS.filter(y => y !== CURRENT_YEAR);
+        if (window.innerWidth < 600) 
+            historyYears = historyYears.reverse()
         const historyHtml = historyYears.map(year => {
             let yearData = schoolData[item.uni][item.dept][year];
-            if (yearData !== undefined) {
-                const data = Array.isArray(yearData) ? yearData[0] : yearData;
+            let data;
+            if(year === Number.toString(CURRENT_YEAR))
+                data = yearData;
+            else if (yearData !== undefined) data = yearData[0];
+            if(year !== Number.toString(CURRENT_YEAR) && yearData !== undefined && yearData.length > 1) {
+                return `<div class="history-block no-data">${year}年 該科系尚未合併</div>`;
+            }
+            else if (data !== undefined) {
                 
                 // 格式化往年的科目倍數（小標籤）
-                const weights = data.科目倍數 ? Object.entries(data.科目倍數)
-                    .map(([sub, w]) => `${sub} ${w}`).join(', ') : '無資料';
+                const weights = Object.entries(data.科目倍數)
+                    .map(([sub, w]) => `${sub} ${w}`).join(', ');
                 
                 return `
                     <div class="history-block">
@@ -84,7 +102,6 @@ function renderComparisonResults(results) {
                         <span class="uni-name">${item.uni}</span>
                         <span class="dept-name">${item.dept}</span>
                     </div>
-                    <div class="current-year-badge">${CURRENT_YEAR} 年</div>
                 </div>
 
                 <div class="current-standards">

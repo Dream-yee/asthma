@@ -525,7 +525,7 @@ scoreInputs.forEach((input, index) => {
 
     input.addEventListener('focus', (e) => {
         // 🌟 確保輸入框在手機鍵盤彈出時不會被遮擋
-        if (window.innerWidth < 600) {
+        if (window.innerWidth < 768) {
             e.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
     });

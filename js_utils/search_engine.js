@@ -21,7 +21,7 @@ const SCHOOL_ALIASES = {
     "頂大": ["國立臺灣大學", "國立陽明交通大學", "國立清華大學", "國立成功大學", "國立政治大學"],
     "四大": ["國立臺灣大學", "國立陽明交通大學", "國立清華大學", "國立成功大學"],
     "四中": ["國立中央大學", "國立中山大學", "國立中興大學", "國立中正大學"],
-    "師北海": ["國立台灣師範大學", "國立臺北大學", "國立臺灣海洋大學"]
+    "師北海": ["國立臺灣師範大學", "國立臺北大學", "國立臺灣海洋大學"]
 };
 
 const DEPT_ALIASES = {
@@ -120,7 +120,7 @@ function get_result(query) {
         // --- 計分系統 ---
 
         // 如果所有關鍵字都有匹配到 (不論是直接匹配還是別名)
-        if (keywordMatches.every(m => m !== null) && (main_unis.length === 0 || main_unis.includes(uniLower))) {
+        if (keywordMatches.every(m => m !== null) && (main_unis.includes(uniLower) || keywordMatches.includes("school_partial"))) {
             
             // 基礎分：所有關鍵字都符合 (AND 條件)
             if(keywordMatches.length !== 0)
