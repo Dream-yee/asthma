@@ -6,13 +6,19 @@ let schoolData = {};
 let searchEngine;
 
 const GUESSING = [
-    "物理治療 職能治療",
-    "頂大 光電 物理 材料",
+    "物理治療 職能治療 語言治療",
+    "醫學系 牙醫 獸醫",
+    "四大 光電 物理 材料",
     "成大 中央 太空 地科",
     "四中 師北海 電機 資工",
     "台大 東吳 中正 法律",
-    
+    "頂大 經濟 財政 財務 金融",
+    "四大 物理學 化學 化工 材料",
+    "頂大 外文 日語 土耳其語",
+    "教育大學 師範 幼兒 特殊教育"
 ]
+
+let inputSuggestion = document.getElementById("input-suggesion");
 
 async function loadData() {
     try {
@@ -23,15 +29,26 @@ async function loadData() {
         schoolData = await response.json();
         searchEngine = await import("../js_utils/search_engine.js");
         searchEngine.flattenData(schoolData)
-
+        
+        const randomElement = GUESSING[Math.floor(Math.random() * GUESSING.length)];
+        
+        inputSuggestion.textContent = randomElement;
     } catch (error) {
         console.error("載入資料時發生錯誤:", error);
     }
 }
 
+inputSuggestion.addEventListener('click', e => {
+    searchInput.value = inputSuggestion.textContent;
+    searching(inputSuggestion.textContent);
+})
+
 searchInput.addEventListener('input', (e) => {
     const query = e.target.value.trim();
-    
+    searching(query);
+});
+
+function searching(query) {
     if (query.length > 0) {
         // 🌟 觸發向上移動動畫
         pageContainer.classList.remove('initial-state');
@@ -46,7 +63,7 @@ searchInput.addEventListener('input', (e) => {
         pageContainer.classList.remove('active-state');
         resultsList.innerHTML = '';
     }
-});
+}
 
 // --- 設定當前年份 ---
 const CURRENT_YEAR = 115;
@@ -55,7 +72,7 @@ const TARGET_YEARS = [CURRENT_YEAR - 3, CURRENT_YEAR - 2, CURRENT_YEAR - 1, CURR
 function renderComparisonResults(results) {
     resultsList.innerHTML = '';
     
-    results.slice(0, 200).forEach((res) => {
+    results.slice(0, 100).forEach((res) => {
         const item = res.item;
         const row = document.createElement('div');
         row.classList.add('comparison-row');
