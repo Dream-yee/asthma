@@ -558,3 +558,20 @@ body {
     color: #f7f7f7;
     height: 120px;
 }
+
+/* 卡片淡入動畫 */
+@keyframes fadeInCard {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.comparison-row {
+    animation: fadeInCard 0.4s ease forwards;
+    /* 效能優化：讓瀏覽器知道這個元素不會影響外部佈局 */
+    contain: content; 
+}
+
+/* 讓捲軸更滑順 */
+html {
+    scroll-behavior: smooth;
+}

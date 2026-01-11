@@ -51,10 +51,10 @@ inputSuggestion.addEventListener('click', e => {
     searching(inputSuggestion.textContent);
 })
 
-searchInput.addEventListener('input', (e) => {
+searchInput.addEventListener('input', debounce((e) => {
     const query = e.target.value.trim();
     searching(query);
-});
+}, 200));
 
 function searching(query) {
     if (query.length > 0) {
@@ -77,12 +77,22 @@ function searching(query) {
 const CURRENT_YEAR = 115;
 const TARGET_YEARS = [CURRENT_YEAR, CURRENT_YEAR - 1, CURRENT_YEAR - 2, CURRENT_YEAR - 3];
 
-function renderComparisonResults(results) {
-    resultsList.innerHTML = '';
+let allFilteredResults = []; // 儲存所有符合條件的結果
+let currentIndex = 0;       // 目前加載到的進度
+const BATCH_SIZE = 5;      // 每一批顯示幾個
+
+function renderComparisonResults(results, append = false) {
+    if (!append) {
+        resultsList.innerHTML = '';
+        currentIndex = 0;
+        allFilteredResults = results; // 保存搜尋後的結果
+    }
     
     let i = 0;
 
-    for(const res of results) {
+    const nextBatch = allFilteredResults.slice(currentIndex, currentIndex + BATCH_SIZE);
+
+    for(const res of nextBatch) {
         
         const item = res.item;
         const row = document.createElement('div');
@@ -150,11 +160,20 @@ function renderComparisonResults(results) {
             </div>
         `;
         resultsList.appendChild(row);
-
-        i++;
-        if(i === 100) break;
     }
+
+    currentIndex += BATCH_SIZE;
 }
+
+// 建立 Intersection Observer
+const observer = new IntersectionObserver((entries) => {
+    if (entries[0].isIntersecting && currentIndex < allFilteredResults.length) {
+        console.log("Lazy Load: 加載下一批...");
+        renderComparisonResults(allFilteredResults, true); // true 代表是附加進去
+    }
+}, { threshold: 0.1 });
+
+observer.observe(document.getElementById('load-more-trigger'));
 
 /**
  * 專門格式化「今年 (115)」細節的函數
@@ -214,5 +233,14 @@ filterItems.forEach(item => {
             searching(searchInput.value);
     });
 });
+
+// 防抖函數
+function debounce(func, delay = 200) {
+    let timer;
+    return (...args) => {
+        clearTimeout(timer);
+        timer = setTimeout(() => func.apply(this, args), delay);
+    };
+}
 
 document.addEventListener('DOMContentLoaded', loadData);
