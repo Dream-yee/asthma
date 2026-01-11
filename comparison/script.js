@@ -167,7 +167,7 @@ function renderComparisonResults(results, append = false) {
 
 // 建立 Intersection Observer
 const observer = new IntersectionObserver((entries) => {
-    if (entries[0].isIntersecting && currentIndex < allFilteredResults.length) {
+    if (searchInput.value.length !== 0 && entries[0].isIntersecting && currentIndex < allFilteredResults.length) {
         console.log("Lazy Load: 加載下一批...");
         renderComparisonResults(allFilteredResults, true); // true 代表是附加進去
     }
