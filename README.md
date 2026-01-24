@@ -1,7 +1,7 @@
-# 屁眼收縮測試
-https://dream-yee.github.io/anus_shrink_test/
+# 氣喘
+https://dream-yee.github.io/asthma/
 
-https://dream-yee.github.io/anus_shrink_test/comparison
+https://dream-yee.github.io/asthma/comparison
 
 這是一個紀錄今年跟往年分科的一些資料的網頁
 
