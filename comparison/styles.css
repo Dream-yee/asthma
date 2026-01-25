@@ -250,13 +250,13 @@
 
 /* 手機版適配 */
 @media (max-width: 600px) {
-    .history-grid-wrapper {
+    /* .history-grid-wrapper {
         flex-direction: column;
         gap: 12px;
     }
     .h-weights {
         white-space: normal;
-    }
+    } */
 }
 
 /* 手機版適配：將今年標準改為垂直 */
@@ -585,7 +585,11 @@ html {
 
 /* --- 跳轉圖示樣式 --- */
 .history-grid-wrapper .card-main {
-    position: relative; /* 讓 jump-link 可以絕對定位 */
+    position: relative; 
+}
+
+.history-grid-wrapper {
+    padding-right: 40px;
 }
 
 .to-uac-button {
@@ -596,8 +600,9 @@ html {
 .jump-link {
     position: absolute;
     right: 20px;
-    width: 32px;
+    width: 34px;
     height: 35px;
+    margin-left: 0;
     display: flex;
     align-items: center;
     justify-content: center;

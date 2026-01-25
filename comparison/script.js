@@ -111,25 +111,26 @@ function renderComparisonResults(results, append = false) {
         // 準備 114, 113 的詳細輔助 HTML;
         
         let historyHtml = "";
+        
+        if(schoolData[item.uni][item.dept][CURRENT_YEAR - 1] !== undefined)
+            for(const data of schoolData[item.uni][item.dept][CURRENT_YEAR - 1]) {
 
-        for(const data of schoolData[item.uni][item.dept][CURRENT_YEAR - 1]) {
-
-            const weights = Object.entries(data.科目倍數)
-                .map(([sub, w]) => `${sub} ${w}`).join(', ');
-            historyHtml += `
-                    <div class="history-block">
-                        <div class="h-top-line">
-                            ${ item.dept !== data["校系名稱"] ? `<span class="h-year">${data["校系名稱"]}</span>` : "" }
-                            <span class="h-score">加權平均: ${data.一般考生錄取標準 || '--'} <small>(前${data.達標比例 || '--'}%)</small></span>
-                            <span class="h-admitted">${data.錄取人數 || '--'}人</span>
+                const weights = Object.entries(data.科目倍數)
+                    .map(([sub, w]) => `${sub} ${w}`).join(', ');
+                historyHtml += `
+                        <div class="history-block">
+                            <div class="h-top-line">
+                                ${ item.dept !== data["校系名稱"] ? `<span class="h-year">${data["校系名稱"]}</span>` : "" }
+                                <span class="h-score">加權平均: ${data.一般考生錄取標準 || '--'} <small>(前${data.達標比例 || '--'}%)</small></span>
+                                <span class="h-admitted">${data.錄取人數 || '--'}人</span>
+                            </div>
+                            <div class="h-weights">${weights}</div>
                         </div>
-                        <div class="h-weights">${weights}</div>
-                    </div>
-                `;
-        }
+                    `;
+            }
 
         if(historyHtml.length === 0) {
-            historyHtml += `<div class="history-block no-data">${year}年 無資料</div>`
+            historyHtml += `<div class="history-block no-data">無資料</div>`
         }
 
         row.innerHTML = `
