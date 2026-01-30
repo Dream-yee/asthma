@@ -425,6 +425,9 @@ body {
     /* margin-bottom: 5px; */
     padding-left: 5px;
     border-left: 3px solid var(--sage-primary);
+    font-size: 14px;
+    margin-top: 11px;
+    margin-bottom: 11px;
 }
 
 /* --- 當狀態變為 active (搜尋中) 時消失 --- */
