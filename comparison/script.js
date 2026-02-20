@@ -87,12 +87,16 @@ function renderComparisonResults(results, append = false) {
         currentIndex = 0;
         allFilteredResults = results; // 保存搜尋後的結果
     }
+
+    if(currentIndex >= allFilteredResults.length) return;
     
     let i = 0;
 
-    const nextBatch = allFilteredResults.slice(currentIndex, currentIndex + BATCH_SIZE);
+    const candidates = allFilteredResults.slice(currentIndex, allFilteredResults.length);
 
-    for(const res of nextBatch) {
+    console.log(currentIndex);
+
+    for(const res of candidates) {
         
         const item = res.item;
         const row = document.createElement('div');
@@ -100,6 +104,7 @@ function renderComparisonResults(results, append = false) {
 
         const currentData = schoolData[item.uni][item.dept][CURRENT_YEAR];
 
+        currentIndex++;
         // exclude filter
         if(filterState.exclude.some(k => (currentData["科目倍數"] != undefined && currentData["科目倍數"][k] !== undefined) || (currentData["學測標準"] != undefined && currentData["學測標準"][k] !== undefined))) 
             continue;
@@ -174,9 +179,9 @@ function renderComparisonResults(results, append = false) {
             </div>
         `;
         resultsList.appendChild(row);
+        i++
+        if(i === BATCH_SIZE) break;
     }
-
-    currentIndex += BATCH_SIZE;
 }
 
 // 建立 Intersection Observer
@@ -185,7 +190,7 @@ const observer = new IntersectionObserver((entries) => {
         console.log("Lazy Load: 加載下一批...");
         renderComparisonResults(allFilteredResults, true); // true 代表是附加進去
     }
-}, { threshold: 0.1 });
+}, { threshold: 0.2 });
 
 observer.observe(document.getElementById('load-more-trigger'));
 
