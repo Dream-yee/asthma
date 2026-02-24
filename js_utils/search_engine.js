@@ -38,7 +38,7 @@ const SCHOOL_ALIASES = {
 const DEPT_ALIASES = {
     "資工": ["資訊工程", "資訊科學"],
     "化工": ["化學工程"],
-    "電資": ["電機工程", "資訊工程", "資電", "電機資訊"],
+    "電資": ["電機工程", "資訊工程", "資電", "電機資訊", "資訊電機"],
     "資管": ["資訊管理"],
     "企管": ["企業管理"],
     "中文": ["中國文學"],
@@ -79,10 +79,19 @@ function get_result(query) {
 
     const kws = trimmedQuery.toLowerCase().replaceAll("台", "臺").split(/\s+/).filter(k => k.length > 0);
     const results = [];
+
+    let uniNumber = 670;
+    let lastUni = '';
     
     flattenedSchoolData.forEach(item => {
         const uniLower = item.uni.replaceAll("台", "臺").toLowerCase();
         const deptLower = item.dept.replaceAll("台", "臺").toLowerCase();
+
+        if(lastUni !== uniLower){
+            uniNumber--;
+            lastUni = uniLower;
+        }
+
         let score = 0;
 
         // --- 核心匹配邏輯 --
@@ -99,11 +108,15 @@ function get_result(query) {
         
         score = school_matched*67 + dept_matched * 2;
         if(score > 0)
-            results.push({ item, score })
+            results.push({ item, score, uniNumber, dept_matched })
     });
 
     // 3. 排序結果
-    results.sort((a, b) => b.score - a.score);
+    results.sort((a, b) => {
+        if(a.item.uni !== b.item.uni && a.dept_matched * b.dept_matched !== 0) {
+            return b.uniNumber - a.uniNumber;
+        } else return b.score - a.score;
+    });
 
     return results
 }
