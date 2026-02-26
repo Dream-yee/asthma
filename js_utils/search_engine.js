@@ -83,6 +83,8 @@ function get_result(query) {
     let uniNumber = 670;
     let lastUni = '';
     
+    // 求求温力翰別再問自己為什麼不能設定got any dept_matched and no other uni can join了
+    // 會很難跟user解釋的
     flattenedSchoolData.forEach(item => {
         const uniLower = item.uni.replaceAll("台", "臺").toLowerCase();
         const deptLower = item.dept.replaceAll("台", "臺").toLowerCase();
@@ -101,21 +103,22 @@ function get_result(query) {
         // 學校
         for(let k of kws) {
             if(uniLower.includes(k) || (SCHOOL_ALIASES[k] !== undefined && SCHOOL_ALIASES[k].includes(uniLower))) 
-                school_matched++;
+                school_matched = 1;
             if(deptLower.includes(k) || (DEPT_ALIASES[k] !== undefined && DEPT_ALIASES[k].some(dept => deptLower.includes(dept))))
-                dept_matched++;
+                dept_matched = 1;
         }
         
-        score = school_matched*67 + dept_matched * 2;
+        score = school_matched*2 + dept_matched * 67;
         if(score > 0)
             results.push({ item, score, uniNumber, dept_matched })
     });
 
     // 3. 排序結果
     results.sort((a, b) => {
-        if(a.item.uni !== b.item.uni && a.dept_matched * b.dept_matched !== 0) {
-            return b.uniNumber - a.uniNumber;
-        } else return b.score - a.score;
+        // if(a.item.uni !== b.item.uni && a.dept_matched * b.dept_matched !== 0) {
+        //     return b.uniNumber - a.uniNumber;
+        // } else return b.score - a.score;
+        return b.score - a.score;
     });
 
     return results
