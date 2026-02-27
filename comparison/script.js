@@ -58,7 +58,7 @@ inputSuggestion.addEventListener('click', e => {
 searchInput.addEventListener('input', debounce((e) => {
     const query = e.target.value.trim();
     searching(query);
-}, 200));
+}, 100));
 
 function searching(query) {
     if (query.length > 0) {
@@ -97,8 +97,6 @@ function renderComparisonResults(results, append = false) {
     let i = 0;
 
     const candidates = allFilteredResults.slice(currentIndex, allFilteredResults.length);
-
-    console.log(currentIndex);
 
     for(const res of candidates) {
         

@@ -1,0 +1,245 @@
+/* style.css */
+:root {
+    --sage-primary: #76bfa2;
+    --sage-light: #eef7f4;
+    --sage-dark: #3d6b59;
+    --bg-gray: #f2f4f3;
+}
+
+body {
+    background-color: var(--bg-gray);
+    margin: 0;
+    padding: 15px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    display: flex;
+    justify-content: center;
+}
+
+.app-container {
+    width: 100%;
+    max-width: 500px; /* 鎖定手機寬度 */
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    height: calc(100vh - 30px);
+}
+
+.card {
+    background: white;
+    border-radius: 24px;
+    box-shadow: 0 8px 24px rgba(118, 191, 162, 0.1);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    flex: 1; /* 讓兩個卡片平分高度 */
+}
+
+/* --- 清單容器：支援置中對齊 --- */
+.list-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    /* 預設不置中，方便搜尋結果由上而下排列 */
+}
+
+/* 當容器內只有說明框時，啟動置中模式 */
+.list-container.centered {
+    justify-content: center;
+    align-items: center;
+    text-align: left; /* 文字維持靠左較好閱讀 */
+}
+
+/* --- 注意事項框框樣式 --- */
+.instruction-box {
+    /* background: var(--sage-light); */
+    /* border: 1px dashed var(--sage-primary); */
+    max-width: 100%; /* 在手機畫面上留點邊緣 */
+    animation: fadeIn 0.5s ease-out;
+}
+
+.instruction-box.hide {
+    display: none;
+}
+
+.info-title {
+    color: var(--sage-dark);
+    font-weight: 800;
+    font-size: 18px;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.info-list {
+    margin: 0;
+    padding-left: 0px;
+    color: var(--sage-dark);
+    font-size: 14px;
+    line-height: 1.8;
+}
+
+.info-list p {
+    margin-bottom: 8px;
+    padding-left: 5px;
+    border-left: 3px solid var(--sage-primary);
+    font-size: 16px;
+}
+
+/* 簡單的淡入動畫 */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* 搜尋列：固定在卡片底部 */
+.search-bar-wrapper {
+    padding: 15px 20px;
+    background: white;
+    border-top: 1px solid var(--sage-light);
+}
+
+#main-search {
+    width: calc(100% - 40px); /* u placeholder asshole */
+    padding: 12px 20px;
+    border-radius: 50px;
+    border: 2px solid var(--sage-light);
+    outline: none;
+    font-size: 16px; /* 防止 iOS 輸入時自動放大 */
+    transition: 0.3s;
+}
+
+#main-search:focus {
+    border-color: var(--sage-primary);
+}
+
+/* 按鈕樣式 */
+.copy-button {
+    margin: 15px 20px;
+    background: var(--sage-primary);
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 16px;
+    font-size: 17px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.copy-button:active {
+    transform: scale(0.98);
+}
+
+/* 校系項目樣式 */
+.dept-item {
+    padding: 12px;
+    border-radius: 12px;
+    margin-bottom: 8px;
+    transition: background 0.2s;
+    border: 1px solid transparent;
+}
+
+.dept-item.light-grey {
+    background-color: #b7cac332;
+}
+
+.dept-item.dark-grey {
+    background-color: #4e5a5624;
+}
+
+.suggestion-section .dept-item:hover {
+    background: var(--sage-light);
+    color: var(--sage-dark);
+}
+
+.dept-item.selected {
+    border: 1px solid var(--sage-light);
+    background: #fff;
+    padding: 15px;
+    border-radius: 16px;
+    margin-bottom: 12px;
+}
+
+.dept-header-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.dept-name-bold {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--sage-dark);
+}
+
+.dept-comparison {
+    background: var(--sage-light);
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.data-row {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.data-row .label {
+    font-weight: bold;
+    color: var(--sage-primary);
+    width: 65px; /* 固定寬度讓對齊更好看 */
+    flex-shrink: 0;
+}
+
+.data-row.highlight-red .value {
+    color: #ab4700;
+    font-weight: bold;
+}
+
+.dept-actions {
+    margin-top: 10px;
+    display: flex;
+    gap: 15px;
+    padding-right: 0;
+}
+
+.action-btn {
+    /* padding-bottom: 0; */
+    font-size: 12px;
+    color: var(--sage-primary);
+    text-decoration: none;
+    font-weight: bold;
+    background: none;
+    border: none;
+    padding: 0;
+    margin-top: 0;
+}
+
+.go-right-mf {
+    margin-left: auto;
+}
+
+.delete-btn {
+    color: #ccc;
+    cursor: pointer;
+    font-weight: bold;
+    padding: 5px;
+}
+
+.delete-btn:hover {
+    color: #e74c3c;
+}
+
+.data-separator {
+    color: #cccccc;
+    font-size: 1em;
+    font-weight: 300;
+    margin: 0 8px;
+    display: inline-block;
+}
