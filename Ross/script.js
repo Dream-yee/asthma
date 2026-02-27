@@ -104,11 +104,11 @@ const observer = new IntersectionObserver((entries) => {
 }, { threshold: 0.5 });
 
 // 3. 點選加入清單
-window.selectDept = (uni, dept, data) => {
+window.selectDept = (uni, dept) => {
     // 檢查是否已存在
     if (selectedDepts.some(d => d.uni === uni && d.dept === dept)) return;
     
-    selectedDepts.push({ uni, dept, data });
+    selectedDepts.push({ uni, dept });
     renderSelected();
 };
 
@@ -123,13 +123,7 @@ function getSortedWeights(weightObj) {
 }
 
 // 4. 渲染已選清單
-function renderSelected(results, append = false) {
-    if (!append) {
-        selectedList.innerHTML = '';
-        currentIndex = 0;
-        allFilteredResults = results; // 保存搜尋後的結果
-    }
-
+function renderSelected() {
     selectedList.innerHTML = selectedDepts.map((item, index) => {
         // 抓取該校系的完整資料
         const deptData = schoolData[item.uni][item.dept];
@@ -202,29 +196,69 @@ function removeDept(index) {
     renderSelected();
 }
 
-// 5. 複製功能
-copyBtn.addEventListener('click', () => {
-    if (selectedDepts.length === 0) return;
+let copyBtnOrigin = "點我複製"
 
-    // 格式化文本 (依照你要求的格式)
+copyBtn.addEventListener('click', () => {
+    if (selectedDepts.length === 0) {
+        copyBtn.innerText = "👅👅👅🫲 sIx sEvEn 🫱👅👅👅";
+        setTimeout(() => copyBtn.innerText = copyBtnOrigin, 2000);
+        return;
+    }
+
+    // 1. 依照大學分組 (Group by University)
     const grouped = selectedDepts.reduce((acc, curr) => {
         if (!acc[curr.uni]) acc[curr.uni] = [];
-        acc[curr.uni].push(`${curr.dept} ${curr.data}`);
+        acc[curr.uni].push(curr.dept);
         return acc;
     }, {});
 
+    // 2. 構建純文字內容
     let text = "";
+
     for (const uni in grouped) {
-        text += `${uni}\n${grouped[uni].join('\n')}\n\n`;
+        text += `${uni}\n`; // 大學標題
+
+        grouped[uni].forEach(dept => {
+            const data = schoolData[uni][dept];
+            const d115 = data["115"];
+            const d114 = data["114"] ? data["114"][0] : null;
+
+            // 格式化倍率與標準
+            const w114 = getSortedWeights(d114?.科目倍數);
+            const w115 = getSortedWeights(d115.科目倍數);
+            const gsat = Object.entries(d115.學測標準 || {})
+                .map(([s, l]) => `${s}:${l}`).join(' ');
+
+            const score114 = d114 ? `${d114.一般考生錄取標準} (${d114.達標比例}%)` : "無114資料";
+
+            // 構建該系所的這一行
+            // 格式：系名 114加權 114分數 (114%)
+            let line = `${dept} ${w114} ${score114}`;
+
+            // 如果 115 的加權科目或倍率有變，則加上提示
+            if (JSON.stringify(d115.科目倍數) !== JSON.stringify(d114?.科目倍數)) {
+                line += ` / 今年 ${w115}`;
+            }
+
+            // 如果有學測標準，加在最後面
+            if (gsat) {
+                line += ` [${gsat}]`;
+            }
+
+            text += `${line}\n`;
+        });
+        text += "\n"; // 大學之間空一行
     }
+
+    console.log(text);
+    
 
     navigator.clipboard.writeText(text.trim()).then(() => {
         // for future dreamyee
         // stupid safari dont allow we use navigator.clipboard in http
         // which means we cant use this in localhost 🥀 🥀
-        const originalText = copyBtn.innerText;
         copyBtn.innerText = "複製成功 🈶🈶🈶";
-        setTimeout(() => copyBtn.innerText = originalText, 2000);
+        setTimeout(() => copyBtn.innerText = copyBtnOrigin, 2000);
     });
 });
 
