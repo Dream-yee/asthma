@@ -5,12 +5,30 @@ const instructionBox = document.createElement("div");
 const selectedList = document.getElementById('selected-list');
 const copyBtn = document.getElementById('copy-btn');
 
+
 let selectedDepts = [];
 
 let CURRENT_YEAR = 115;
 
 let schoolData = {};
 let searchEngine;
+
+const GUESSING = [
+    "物理治療 職能治療 語言治療",
+    "醫學系 牙醫 獸醫",
+    "四大 光電 物理 材料",
+    "成大 中央 太空 地科",
+    "四中 師北海 電機 資工",
+    "台大 政大 東吳 中正 法律",
+    "頂大 經濟 財政 財務 金融",
+    "四大 物理學 化學 化工 材料",
+    "頂大 外文 日語 土耳其語",
+    "清大 交大 材料 化學 化工",
+    "頂大 四中 中文 外文",
+    "台大 陽明 成大 醫學系 牙醫系",
+    "頂大 機械 光電",
+    "頂大 醫學大學 藥學 物治 心理"
+]
 
 async function loadData() {
     try {
@@ -27,15 +45,33 @@ async function loadData() {
         instructionBox.className = "instruction-box";
         instructionBox.innerHTML = `<ul class="info-list">
                     <p>可以輸入頂大 / 四大 / 四中 / 師北海，且有些校系可以簡寫</p>
+                    <p>達標佔比是分數在 ⌈加權平均 x 科目數⌉ 以上的考生比例</p>
+                    <p><a class="link" href="../">單系歷年資料</a> / <a class="link" href="../comparison">大字&科目篩選版</a> / <a class="link" href="https://github.com/Dream-yee/anus_shrink_test">GitHub</a></p>
+                    <p><a class="link" href="https://www.uac.edu.tw" target="_blank">考分會</a>資料連結: <a class="link" href="https://uac2.ncku.edu.tw/cross_search/" target="_blank">校系分則</a> / <a class="link" href="https://www.uac.edu.tw/uac114_note/" target="_blank">114</a> / <a class="link" href="https://www.uac.edu.tw/uac113_note/" target="_blank">113</a> / <a href="https://www.uac.edu.tw/uac112_note/" class="link" target="_blank">112</a></p>
+                    <p>你可能想知道: <span id="input-suggesion" class="link"></span></p>
                 </ul>`
         suggestionList.appendChild(instructionBox);
+        let inputSuggestion = document.getElementById("input-suggesion");
 
-        
-        // const randomElement = GUESSING[Math.floor(Math.random() * GUESSING.length)];
-        // inputSuggestion.textContent = randomElement;
+
+        inputSuggestion.addEventListener('click', e => {
+            searchInput.value = inputSuggestion.textContent;
+            searching(inputSuggestion.textContent);
+        })
+
+        const randomElement = GUESSING[Math.floor(Math.random() * GUESSING.length)];
+        inputSuggestion.textContent = randomElement;
     } catch (error) {
         console.error("載入資料時發生錯誤:", error);
     }
+}
+function searching(query) {
+    // 開始搜尋：移除置中類別
+    suggestionList.classList.remove('centered');
+    instructionBox.classList.add('hide')
+    // 呼叫你的 API
+    const results = searchEngine.get_result(query);
+    renderSuggestions(results);
 }
 
 // 1. 監聽搜尋
@@ -49,13 +85,7 @@ searchInput.addEventListener('input', debounce((e)=>{
         instructionBox.classList.remove('hide')
         return;
     }
-    
-    // 開始搜尋：移除置中類別
-    suggestionList.classList.remove('centered');
-    instructionBox.classList.add('hide')
-    // 呼叫你的 API
-    const results = searchEngine.get_result(query);
-    renderSuggestions(results);
+    searching(query)
 }, 100));
 
 

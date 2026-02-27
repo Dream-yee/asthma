@@ -243,3 +243,9 @@ body {
     margin: 0 8px;
     display: inline-block;
 }
+
+.link {
+    color: rgb(122, 139, 131);
+    cursor: pointer;
+    text-decoration: underline;
+}
