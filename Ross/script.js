@@ -192,13 +192,13 @@ function renderSelected() {
 
                 <div class="dept-comparison">
                     <div class="data-row">
-                        <span class="label">去年:</span>
+                        <span class="label">去年: </span>
                         <span class="value">${w114Str}</span> 
                         <span class="data-separator">|</span>
                         <span class="value">${score114}</span>
                     </div>
                     <div class="data-row ${isWeightChanged ? 'highlight-red' : ''}">
-                        <span class="label">今年:</span>
+                        <span class="label">今年: </span>
                         <span class="value">${w115Str}</span>
                         <span class="data-separator">|</span>
                         <span class="">${gsatStr || '無'}</span>

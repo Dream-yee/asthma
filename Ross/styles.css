@@ -187,13 +187,12 @@ body {
 
 .data-row {
     display: flex;
-    justify-content: flex-start;
+    /* justify-content: flex-start; */
 }
 
 .data-row .label {
     font-weight: bold;
     color: var(--sage-primary);
-    width: 65px; /* 固定寬度讓對齊更好看 */
     flex-shrink: 0;
 }
 
