@@ -7,6 +7,7 @@ const copyBtn = document.getElementById('copy-btn');
 
 
 let selectedDepts = [];
+let selectedDeptsIds = [];
 
 let CURRENT_YEAR = 115;
 
@@ -109,13 +110,18 @@ function renderSuggestions(results, append = false) {
     if(document.getElementById("load-more-trigger") !== null)
         document.getElementById("load-more-trigger").remove() // 很屎的做法但算了反正 it works
 
+    console.log(selectedDeptsIds);
+    
+
     for(const x of candidates) {
         if(lastUni != x.item.uni) {
             uniNumber++;
             lastUni = x.item.uni;
         }
+        let deptId = schoolData[x.item.uni][x.item.dept][CURRENT_YEAR + ""].id;
+
         suggestionList.innerHTML += `
-        <div class="dept-item ${uniNumber % 2 === 0 ? 'light-grey' : 'dark-grey' }" onclick="selectDept('${x.item.uni}', '${x.item.dept}', '${x.item.data}')">
+        <div id="dept_${deptId}" class="dept-item ${uniNumber % 2 === 0 ? 'light-grey' : 'dark-grey' } ${selectedDeptsIds.includes(deptId) ? 'suggestion_selected' : ''}" onclick="selectDept('${x.item.uni}', '${x.item.dept}', '${deptId}')">
             <strong>${x.item.uni}</strong> ${x.item.dept}
         </div>
     `
@@ -134,12 +140,12 @@ const observer = new IntersectionObserver((entries) => {
 }, { threshold: 0.5 });
 
 // 3. 點選加入清單
-window.selectDept = (uni, dept) => {
+window.selectDept = (uni, dept, id) => {
     // 檢查是否已存在
     if (selectedDepts.some(d => d.uni === uni && d.dept === dept)) return;
-    
     selectedDepts.push({ uni, dept });
-    renderSelected();
+    document.getElementById(`dept_${id}`).classList.add('suggestion_selected');
+    renderSelected(true);
 };
 
 // 4. 渲染已選清單
@@ -153,13 +159,14 @@ function getSortedWeights(weightObj) {
 }
 
 // 4. 渲染已選清單
-function renderSelected() {
+function renderSelected(adding = false) {
+    selectedDeptsIds = [];
     selectedList.innerHTML = selectedDepts.map((item, index) => {
         // 抓取該校系的完整資料
         const deptData = schoolData[item.uni][item.dept];
         if (!deptData) return ''; // 防呆 (為什麼我要防自己呆啊Gemini)
 
-        const d115 = deptData[CURRENT_YEAR + ""];
+        const d115 = deptData[CURRENT_YEAR + ""]; // stupid valuable name but I'm lazy to change it.
         const d114 = deptData[CURRENT_YEAR - 1 + ""] ? deptData[CURRENT_YEAR - 1 + ""][0] : null; // 114 是 Array
 
         // 處理 115 加權與學測標準
@@ -175,10 +182,9 @@ function renderSelected() {
         // 檢查倍率是否有變動
         const isWeightChanged = d114 && JSON.stringify(d115.科目倍數) !== JSON.stringify(d114.科目倍數);
 
-        // 生成外部連結 (以大考中心與大學甄選入學委員會格式為例)
-        const collegeId = d115.id ? d115.id.substring(0, 3) : '';
-        const ruleUrl = `https://www.cac.edu.tw/star115/system/115_Col_Show.php?collegeid=${collegeId}&deptid=${d115.id}`;
         const scoreUrl = `https://dream-yee.github.io/asthma/?school=${item.uni}&dept=${item.dept}`; 
+
+        selectedDeptsIds.push(d115.id)
 
         return `
             <div class="dept-item selected">
@@ -187,7 +193,7 @@ function renderSelected() {
                         <div class="uni-mini">${item.uni}</div>
                         <div class="dept-name-bold">${item.dept}</div>
                     </div>
-                    <div class="delete-btn" onclick="removeDept(${index})">[X]</div>
+                    <div class="delete-btn" onclick="removeDept(${index}, '${d115.id}')">[X]</div>
                 </div>
 
                 <div class="dept-comparison">
@@ -218,11 +224,15 @@ function renderSelected() {
             </div>
         `;
     }).join('');
+    if (adding)
+        selectedList.scrollTo(0, selectedList.scrollHeight);
 }
 
 // 移除校系的功能
-function removeDept(index) {
+function removeDept(index, id) {
     selectedDepts.splice(index, 1);
+    if(document.getElementById(`dept_${id}`) !== null)
+        document.getElementById(`dept_${id}`).classList.remove("suggestion_selected");
     renderSelected();
 }
 
@@ -230,7 +240,7 @@ let copyBtnOrigin = "點我複製"
 
 copyBtn.addEventListener('click', () => {
     if (selectedDepts.length === 0) {
-        copyBtn.innerText = "👅👅👅🫲 sIx sEvEn 🫱👅👅👅";
+        copyBtn.innerText = "👅👅👅🫲 sÎx sËvẼn 🫱👅👅👅";
         setTimeout(() => copyBtn.innerText = copyBtnOrigin, 2000);
         return;
     }
