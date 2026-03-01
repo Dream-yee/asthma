@@ -51,3 +51,5 @@ https://www.ilovepdf.com/pdf_to_excel 用這個轉，超強
 
 7. 跑 data_integrator.py 把這幾年的結果合起來, 前面的constant valuable記得改, 這樣就可以了
 
+8. tools 裡面的 score_distribution 記得跑一下
+好啦我之後會改 這麼多步驟麻煩我自己幹嘛

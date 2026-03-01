@@ -16,6 +16,8 @@ let schoolData = {};
 let astScoreDistribution = {};
 let searchEngine;
 
+let copypasta = {};
+
 const GUESSING = [
     "物理治療 職能治療 語言治療",
     "醫學系 牙醫 獸醫",
@@ -46,7 +48,7 @@ async function loadData() {
         // damn it
         // Idk if I should make this in every year
         // since Im lazy and who the fuck care about that
-        const response1 = await fetch('../datas/subjects_combinations_last_yr.json');
+        const response1 = await fetch(`../datas/${CURRENT_YEAR-1}/subjects_combinations.json`);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -193,25 +195,35 @@ function renderSelected(adding = false) {
 
         const d115 = deptData[CURRENT_YEAR + ""]; 
         const d114 = deptData[CURRENT_YEAR - 1 + ""] ? deptData[CURRENT_YEAR - 1 + ""][0] : null; 
+        // stupid variable name
+        // d115 is this year and d114 is the previous year
+        // again, fucking stupid variable name
 
         const w115Str = getSortedWeights(d115.科目倍數);
         const gsatStr = Object.entries(d115.學測標準 || {})
             .map(([sub, lvl]) => `${sub.charAt(0) === "數" ? sub : sub.charAt(0)}: ${lvl.substring(0, 1)}`)
             .join(' ');
 
+        const w114Str = d114 ? getSortedWeights(d114.科目倍數) : "無資料";
+        const isWeightChanged = d114 && JSON.stringify(d115.科目倍數) !== JSON.stringify(d114.科目倍數);
+        const scoreUrl = `https://dream-yee.github.io/asthma/?school=${item.uni}&dept=${item.dept}`; 
+
         // --- 分科需均計算邏輯 ---
         let scoreDisplay = "無資料";
+        if(copypasta[item.uni] === undefined) copypasta[item.uni] = {};
         if (d114) {
             const weights = d114.科目倍數;
             let goal = d114.一般考生錄取標準總分;
             
             let userGsatWeightedSum = 0;
             let subtestWeightsSum = 0;
+            let astSubjects = 0;
             let weightsSum = 0;
 
             Object.entries(weights).forEach(([sub, weight]) => {
                 if (gsatMapping[sub] === undefined) {
                     subtestWeightsSum += weight;
+                    astSubjects++;
                 } else if (gsatMapping[sub] !== "") {
                     goal -= parseFloat(gsatMapping[sub]) * weight;
                     userGsatWeightedSum += weight;
@@ -220,20 +232,24 @@ function renderSelected(adding = false) {
             });
 
             // 如果有學測成績，且有需要考分科科目s
+            const required = goal / subtestWeightsSum;
             if (userGsatWeightedSum > 0) {
-                const required = goal / subtestWeightsSum;
-                console.log(subtestWeightsSum);
+                const allTimesOne = required * astSubjects;
                 // 顯示計算結果，四捨五入到小數第二位
-                scoreDisplay = `分科需均: <b style="color:var(--sage-dark)">${required.toFixed(2)} (${required > 60 ? "你就別想了" : ``})</b>`;
+                let pr_txt = d114["去學測組別代號"] !== null ? `前${astScoreDistribution[d114["去學測組別代號"]]["累積百分比"][Math.ceil(allTimesOne) + ""]}%` : "人數統計無資料";
+                let pr_txt_pasta = d114["去學測組別代號"] !== null ? `(前${astScoreDistribution[d114["去學測組別代號"]]["累積百分比"][Math.ceil(allTimesOne) + ""]}%)` : "";
+                scoreDisplay = `你分科需均: <b style="color:var(--sage-dark)">${required.toFixed(2)} (${required > 60 ? "你就別想了" : pr_txt})</b>`;
+                copypasta[item.uni][item.dept] = `${w114Str} 你需: ${required.toFixed(2)} ${pr_txt_pasta}` 
             } else {
                 // 回歸原始顯示
                 scoreDisplay = `平均 ${d114.一般考生錄取標準} (前${d114.達標比例}%)`;
+                copypasta[item.uni][item.dept] = `${w114Str} 平均: ${d114.一般考生錄取標準} (前${d114.達標比例}%)`;
+            }
+
+            if (JSON.stringify(d115.科目倍數) !== JSON.stringify(d114?.科目倍數)) {
+                    copypasta[item.uni][item.dept] += ` | 今年 ${getSortedWeights(d115.科目倍數)}`;
             }
         }
-
-        const w114Str = d114 ? getSortedWeights(d114.科目倍數) : "無資料";
-        const isWeightChanged = d114 && JSON.stringify(d115.科目倍數) !== JSON.stringify(d114.科目倍數);
-        const scoreUrl = `https://dream-yee.github.io/asthma/?school=${item.uni}&dept=${item.dept}`; 
 
         selectedDeptsIds.push(d115.id);
 
@@ -296,6 +312,12 @@ copyBtn.addEventListener('click', () => {
         setTimeout(() => copyBtn.innerText = copyBtnOrigin, 2000);
         return;
     }
+    
+    const priorityOrder = [
+            "國立臺灣大學", "國立清華大學", "國立陽明交通大學", "國立成功大學", "國立政治大學",
+            "國立中央大學", "國立中山大學", "國立中興大學", "國立中正大學", 
+            "國立臺灣師範大學", "國立臺北大學", "國立臺灣海洋大學"
+        ];
 
     // 1. 依照大學分組 (Group by University)
     const grouped = selectedDepts.reduce((acc, curr) => {
@@ -304,41 +326,32 @@ copyBtn.addEventListener('click', () => {
         return acc;
     }, {});
 
+    const sortedUnis = Object.keys(grouped).sort((a, b) => {
+        // 尋找在 priorityOrder 中的索引
+        const indexA = priorityOrder.findIndex(p => a.includes(p));
+        const indexB = priorityOrder.findIndex(p => b.includes(p));
+
+        // 邏輯：如果在名單內，index 會是 0, 1, 2...；不在名單內會是 -1
+        if (indexA !== -1 && indexB !== -1) return indexA - indexB; // 都在名單內，按順序排
+        if (indexA !== -1) return -1; // 只有 A 在名單，A 優先
+        if (indexB !== -1) return 1;  // 只有 B 在名單，B 優先
+        return a.localeCompare(b, 'zh-Hant'); // 都不在名單，按字首筆畫排
+    });
+
     // 2. 構建純文字內容
     let text = "";
 
-    for (const uni in grouped) {
+    console.log(sortedUnis);
+    console.log(grouped);
+    
+
+    for (const uni of sortedUnis) {
         text += `${uni}\n`; // 大學標題
 
         grouped[uni].forEach(dept => {
-            const data = schoolData[uni][dept];
-            const d115 = data["115"];
-            const d114 = data["114"] ? data["114"][0] : null;
-
-            // 格式化倍率與標準
-            const w114 = getSortedWeights(d114?.科目倍數);
-            const w115 = getSortedWeights(d115.科目倍數);
-            const gsat = Object.entries(d115.學測標準 || {})
-                .map(([s, l]) => `${s}:${l}`).join(' ');
-
-            const score114 = d114 ? `${d114.一般考生錄取標準} (${d114.達標比例}%)` : "無114資料";
-
-            // 構建該系所的這一行
-            // 格式：系名 114加權 114分數 (114%)
-            let line = `${dept} ${w114} ${score114}`;
-
-            // 如果 115 的加權科目或倍率有變，則加上提示
-            if (JSON.stringify(d115.科目倍數) !== JSON.stringify(d114?.科目倍數)) {
-                line += ` / 今年 ${w115}`;
-            }
-
-            // 如果有學測標準，加在最後面
-            if (gsat) {
-                line += ` [${gsat}]`;
-            }
-
-            text += `${line}\n`;
+            text += `${copypasta[uni][dept]}\n`;
         });
+        
         text += "\n"; // 大學之間空一行
     }
 

@@ -129,7 +129,9 @@ def i_need_output(ip, op):
 # 執行腳本
 # =======================================================
 
-INPUT_CSV = 'datas/114/subjects_combinations.csv' # 改檔名的地方
-OUTPUT_JSON = 'datas/subjects_combinations_last_yr.json'
+YEAR = 112
+
+INPUT_CSV = f'datas/{YEAR}/subjects_combinations.csv' # 改檔名的地方
+OUTPUT_JSON = f'datas/{YEAR}/subjects_combinations.json'
 
 i_need_output(INPUT_CSV, OUTPUT_JSON)
