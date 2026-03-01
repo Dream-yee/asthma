@@ -120,12 +120,16 @@ def convert_score_distribution(csv_filepath):
     except Exception as e:
         print(f"發生未知錯誤: {e}")
 
+def i_need_output(ip, op):
+    with open(op, 'w', encoding='utf-8') as f:
+        json.dump(convert_score_distribution(ip), f, ensure_ascii=False, indent=4)
+
 
 # =======================================================
 # 執行腳本
 # =======================================================
 
-# INPUT_CSV = '114_score_distribution.csv' # 改檔名的地方
-# OUTPUT_JSON = 'score_distribution.json'
+INPUT_CSV = 'datas/114/subjects_combinations.csv' # 改檔名的地方
+OUTPUT_JSON = 'datas/subjects_combinations_last_yr.json'
 
-# convert_score_distribution(INPUT_CSV, OUTPUT_JSON)
+i_need_output(INPUT_CSV, OUTPUT_JSON)

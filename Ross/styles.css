@@ -248,3 +248,98 @@ body {
     cursor: pointer;
     text-decoration: underline;
 }
+
+/* --- GSAT Side-Island Style --- */
+/* 側邊觸發標籤 */
+.island-trigger {
+    position: absolute;
+    top: 70%;
+    right: 0;
+    width: 30px;
+    background-color: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px); /* 磨砂玻璃感 */
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    padding: 10px 5px;
+    font-size: 15px;
+    border-radius: 12px 0 0 12px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    font-weight: bold;
+    align-items: center;
+    color: black;
+}
+
+.trigger-icon { font-size: 18px; writing-mode: horizontal-tb; }
+/* --- 極窄智慧島 --- */
+.gsat-island {
+    position: fixed;
+    right: -100px; /* 初始隱藏位置 */
+    top: 25%;
+    width: 60px;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--sage-light);
+    border-radius: 20px 0 0 20px;
+    box-shadow: -5px 0 20px rgba(0,0,0,0.05);
+    z-index: 1001;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 20px 0;
+}
+
+.gsat-island.active {
+    transform: translateX(-100px);
+}
+
+/* 輸入框清單 */
+.score-minimal-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+/* 輸入框樣式 */
+.score-input {
+    width: 70%;
+    padding: 10px 5px;
+    border: none;
+    border-bottom: 2px solid var(--sage-light);
+    background: transparent;
+    text-align: center;
+    font-size: 16px;
+    font-weight: bold;
+    color: var(--sage-dark);
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+.score-input:focus {
+    border-bottom-color: var(--sage-primary);
+}
+
+/* 針對 Placeholder 的樣式 */
+.score-input::placeholder {
+    font-size: 12px;
+    color: #ccc;
+    font-weight: normal;
+}
+
+/* 隱藏數字箭頭 */
+.score-input::-webkit-outer-spin-button,
+.score-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* 自動存檔小圓點 */
+.status-dot {
+    width: 6px;
+    height: 6px;
+    background: var(--sage-primary);
+    border-radius: 50%;
+    margin: 15px auto 0;
+    opacity: 0;
+    transition: opacity 0.3s;
+}

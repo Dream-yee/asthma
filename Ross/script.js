@@ -3,6 +3,7 @@ const searchInput = document.getElementById('main-search');
 const suggestionList = document.getElementById('suggestion-list');
 const instructionBox = document.createElement("div");
 const selectedList = document.getElementById('selected-list');
+const scoreInputs = document.getElementsByClassName('score-input')
 const copyBtn = document.getElementById('copy-btn');
 
 
@@ -12,6 +13,7 @@ let selectedDeptsIds = [];
 let CURRENT_YEAR = 115;
 
 let schoolData = {};
+let astScoreDistribution = {};
 let searchEngine;
 
 const GUESSING = [
@@ -41,12 +43,22 @@ async function loadData() {
         searchEngine = await import("../js_utils/search_engine.js");
         searchEngine.flattenData(schoolData)
 
+        // damn it
+        // Idk if I should make this in every year
+        // since Im lazy and who the fuck care about that
+        const response1 = await fetch('../datas/subjects_combinations_last_yr.json');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        astScoreDistribution = await response1.json();
+
         // stupid instruction
         instructionBox.id = "instruction-box";
         instructionBox.className = "instruction-box";
         instructionBox.innerHTML = `<ul class="info-list">
                     <p>可以輸入頂大 / 四大 / 四中 / 師北海，且有些校系可以簡寫</p>
                     <p>達標佔比是分數在 ⌈加權平均 x 科目數⌉ 以上的考生比例</p>
+                    <p>右下方學測按鈕點開會跑出可輸入學測<b>60級分制</b>分數的輸入框, <br>輸入後, 底下的列表及複製的結果將改為顯示你在分科所需要的平均分數</p>
                     <p><a class="link" href="../">單系歷年資料</a> / <a class="link" href="../comparison">大字&科目篩選版</a> / <a class="link" href="https://github.com/Dream-yee/anus_shrink_test">GitHub</a></p>
                     <p><a class="link" href="https://www.uac.edu.tw" target="_blank">考分會</a>資料連結: <a class="link" href="https://uac2.ncku.edu.tw/cross_search/" target="_blank">校系分則</a> / <a class="link" href="https://www.uac.edu.tw/uac114_note/" target="_blank">114</a> / <a class="link" href="https://www.uac.edu.tw/uac113_note/" target="_blank">113</a> / <a href="https://www.uac.edu.tw/uac112_note/" class="link" target="_blank">112</a></p>
                     <p>你可能想知道: <span id="input-suggesion" class="link"></span></p>
@@ -161,30 +173,69 @@ function getSortedWeights(weightObj) {
 // 4. 渲染已選清單
 function renderSelected(adding = false) {
     selectedDeptsIds = [];
+    
+    // 定義學測科目對應 key (這要跟你的 schoolData 內的 key 匹配)
+    const gsatMapping =  {
+        "國文": scoreInputs[0].value,
+        "英文": scoreInputs[1].value,
+        "數A": scoreInputs[2].value,
+        "數B": scoreInputs[3].value,
+        "自然": scoreInputs[4].value,
+        "社會": scoreInputs[5].value,
+    }
+
+    console.log(gsatMapping);
+    
+
     selectedList.innerHTML = selectedDepts.map((item, index) => {
-        // 抓取該校系的完整資料
         const deptData = schoolData[item.uni][item.dept];
-        if (!deptData) return ''; // 防呆 (為什麼我要防自己呆啊Gemini)
+        if (!deptData) return ''; 
 
-        const d115 = deptData[CURRENT_YEAR + ""]; // stupid valuable name but I'm lazy to change it.
-        const d114 = deptData[CURRENT_YEAR - 1 + ""] ? deptData[CURRENT_YEAR - 1 + ""][0] : null; // 114 是 Array
+        const d115 = deptData[CURRENT_YEAR + ""]; 
+        const d114 = deptData[CURRENT_YEAR - 1 + ""] ? deptData[CURRENT_YEAR - 1 + ""][0] : null; 
 
-        // 處理 115 加權與學測標準
         const w115Str = getSortedWeights(d115.科目倍數);
         const gsatStr = Object.entries(d115.學測標準 || {})
             .map(([sub, lvl]) => `${sub.charAt(0) === "數" ? sub : sub.charAt(0)}: ${lvl.substring(0, 1)}`)
             .join(' ');
 
-        // 處理 114 加權與分數
+        // --- 分科需均計算邏輯 ---
+        let scoreDisplay = "無資料";
+        if (d114) {
+            const weights = d114.科目倍數;
+            let goal = d114.一般考生錄取標準總分;
+            
+            let userGsatWeightedSum = 0;
+            let subtestWeightsSum = 0;
+            let weightsSum = 0;
+
+            Object.entries(weights).forEach(([sub, weight]) => {
+                if (gsatMapping[sub] === undefined) {
+                    subtestWeightsSum += weight;
+                } else if (gsatMapping[sub] !== "") {
+                    goal -= parseFloat(gsatMapping[sub]) * weight;
+                    userGsatWeightedSum += weight;
+                }
+                weightsSum += weight;
+            });
+
+            // 如果有學測成績，且有需要考分科科目s
+            if (userGsatWeightedSum > 0) {
+                const required = goal / subtestWeightsSum;
+                console.log(subtestWeightsSum);
+                // 顯示計算結果，四捨五入到小數第二位
+                scoreDisplay = `分科需均: <b style="color:var(--sage-dark)">${required.toFixed(2)} (${required > 60 ? "你就別想了" : ``})</b>`;
+            } else {
+                // 回歸原始顯示
+                scoreDisplay = `平均 ${d114.一般考生錄取標準} (前${d114.達標比例}%)`;
+            }
+        }
+
         const w114Str = d114 ? getSortedWeights(d114.科目倍數) : "無資料";
-        const score114 = d114 ? `平均 ${d114.一般考生錄取標準} (前${d114.達標比例}%)` : "無資料";
-
-        // 檢查倍率是否有變動
         const isWeightChanged = d114 && JSON.stringify(d115.科目倍數) !== JSON.stringify(d114.科目倍數);
-
         const scoreUrl = `https://dream-yee.github.io/asthma/?school=${item.uni}&dept=${item.dept}`; 
 
-        selectedDeptsIds.push(d115.id)
+        selectedDeptsIds.push(d115.id);
 
         return `
             <div class="dept-item selected">
@@ -201,7 +252,7 @@ function renderSelected(adding = false) {
                         <span class="label">去年: </span>
                         <span class="value">${w114Str}</span> 
                         <span class="data-separator">|</span>
-                        <span class="value">${score114}</span>
+                        <span class="value">${scoreDisplay}</span>
                     </div>
                     <div class="data-row ${isWeightChanged ? 'highlight-red' : ''}">
                         <span class="label">今年: </span>
@@ -213,10 +264,11 @@ function renderSelected(adding = false) {
 
                 <div class="dept-actions">
                     <form target="_blank" class="go-right-mf">
-                        <button class="action-btn" onclick="window.open('${scoreUrl}')">[歷年分數]</button>
+                        <button type="button" class="action-btn" onclick="window.open('${scoreUrl}')">[歷年分數]</button>
                     </form>
                     <form target="_blank" action="https://uac2.ncku.edu.tw/cross_search/index.php?c=search&m=detail" method="post">
-                        <button name="dep_id" value=${deptData[CURRENT_YEAR + ""].id} type="submit" class="action-btn" title="考分會原始資料">
+                        <input type="hidden" name="dep_id" value="${d115.id}">
+                        <button type="submit" class="action-btn" title="考分會原始資料">
                             [校系分則]
                         </button>
                     </form>
@@ -224,8 +276,8 @@ function renderSelected(adding = false) {
             </div>
         `;
     }).join('');
-    if (adding)
-        selectedList.scrollTo(0, selectedList.scrollHeight);
+    
+    if (adding) selectedList.scrollTo({ top: selectedList.scrollHeight, behavior: 'smooth' });
 }
 
 // 移除校系的功能
@@ -310,5 +362,44 @@ function debounce(func, delay = 50) {
         timer = setTimeout(() => func.apply(this, args), delay);
     };
 }
+
+// 切換開關
+function toggleGsatIsland() {
+    document.getElementById('gsat-island').classList.toggle('active');
+}
+
+// 初始化監聽器
+document.querySelectorAll('.score-input').forEach(input => {
+    // 1. 自動儲存與自動跳轉
+    input.addEventListener('input', (e) => {
+        const val = e.target.value;
+        const nextId = e.target.getAttribute('data-next');
+        
+        // 自動跳轉邏輯：如果輸入了兩位數，或是輸入的數字 > 6 (既然最高60)
+        if (val.length >= 2 || (parseInt(val) > 6 && val.length === 1)) {
+            if(parseInt(val) > 60) {
+                e.target.value = 60;
+            }
+            if (nextId) {
+                const nextEl = document.getElementById(nextId);
+                if (nextEl) nextEl.focus();
+            }
+        }
+
+        renderSelected();
+
+    });
+
+    // 支援 Backspace 刪除後跳回前一格
+    input.addEventListener('keydown', (e) => {
+        const previousId = e.target.getAttribute('data-previous');
+        if (e.key === 'Backspace' && e.target.value === '') {
+            if (previousId) {
+                document.getElementById(previousId).focus()
+            }
+            renderSelected();
+        }
+    });
+});
 
 document.addEventListener('DOMContentLoaded', loadData);

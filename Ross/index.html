@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,24 +8,53 @@
     <meta name="description" content="讓你方便檢視去年分科校系的分數並複製到自己的手機或電腦裡">
     <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
     <div class="app-container">
-    <section class="card suggestion-section">
-        <div class="list-container centered" id="suggestion-list">
-        </div>
-        <div class="search-bar-wrapper">
-            <input type="text" id="main-search" placeholder="在這裡輸入關鍵字" />
-        </div>
-    </section>
-
-    <section class="card selection-section">
-        <div class="list-container" id="selected-list">
+        <section class="card suggestion-section">
+            <div class="list-container centered" id="suggestion-list">
             </div>
-        <button id="copy-btn" class="copy-button">
-            <span>點我複製</span>
-        </button>
-    </section>
-</div>
+            <div class="search-bar-wrapper">
+                <input type="text" id="main-search" placeholder="在這裡輸入關鍵字" />
+            </div>
+        </section>
+
+        <section class="card selection-section">
+            <div class="list-container" id="selected-list">
+            </div>
+            <button id="copy-btn" class="copy-button">
+                <span>點我複製</span>
+            </button>
+        </section>
+
+        <div class="island-trigger" onclick="toggleGsatIsland()">
+            <span class="trigger-text">學測</span>
+        </div>
+        <div id="gsat-island" class="gsat-island">
+
+            <div class="island-content">
+                <div class="score-minimal-list">
+                    <input type="number" class="score-input" data-previous id="gsat-chi" data-next="gsat-eng" placeholder="國文" min="0"
+                        max="60">
+                    <input type="number" class="score-input" data-previous="gsat-chi" id="gsat-eng" data-next="gsat-mathA" placeholder="英文"
+                        min="0" max="60">
+                    <input type="number" class="score-input" data-previous="gsat-eng" id="gsat-mathA" data-next="gsat-mathB" placeholder="數A"
+                        min="0" max="60">
+                    <input type="number" class="score-input" data-previous="gsat-mathA" id="gsat-mathB" data-next="gsat-sci" placeholder="數B"
+                        min="0" max="60">
+                    <input type="number" class="score-input" data-previous="gsat-mathB" id="gsat-sci" data-next="gsat-soc" placeholder="自然" min="0"
+                        max="60">
+                    <input type="number" class="score-input" data-previous="gsat-sci" id="gsat-soc" placeholder="社會" min="0" max="60">
+                </div>
+                <div class="status-dot" id="save-status-dot" title="已自動存檔"></div>
+            </div>
+        </div>
+        <div id="island-overlay" class="island-overlay" onclick="toggleGsatIsland()"></div>
+
+        <div id="island-overlay" class="island-overlay" onclick="toggleGsatIsland()"></div>
+
+    </div>
 </body>
-    <script src="script.js"></script> 
+<script src="script.js"></script>
+
 </html>
