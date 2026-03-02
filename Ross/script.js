@@ -165,17 +165,37 @@ window.selectDept = (uni, dept, id) => {
 
 // 4. 渲染已選清單
 // 輔助函式：縮寫科目名稱並排序倍率 (由高到低)
-function getSortedWeights(weightObj) {
+function getSortedWeights(weightObj, forCopy = false) {
     if (!weightObj) return "無資料";
-    return Object.entries(weightObj)
-        .sort((a, b) => {
-            if(a[1] === b[1]) {
-                return a[0].localeCompare(b[0], 'zh-Hant');
-            }
-            else return b[1] - a[1];
-        })
-        .map(([sub, val]) => `${sub.charAt(0) === "數" ? sub : sub.charAt(0) }: ${val}`) // 取首字，如「國文」->「國」
-        .join(' ');
+    if(!forCopy)
+        return Object.entries(weightObj)
+            .sort((a, b) => {
+                if(a[1] === b[1]) {
+                    return a[0].localeCompare(b[0], 'zh-Hant');
+                }
+                else return b[1] - a[1];
+            })
+            .map(([sub, val]) => `${sub.charAt(0) === "數" ? sub : sub.charAt(0) }: ${val}`) // 取首字，如「國文」->「國」
+            .join(' ');
+    else {
+        let weight = null, result="";
+        for(const entry of Object.entries(weightObj)
+            .sort((a, b) => {
+                if(a[1] === b[1]) {
+                    return a[0].localeCompare(b[0], 'zh-Hant');
+                }
+                else return b[1] - a[1];
+            })
+            .map(([sub, val]) => [sub.charAt(0) === "數" ? sub : sub.charAt(0) , val])) {
+                if(weight !== entry[1]){
+                    if(weight !== null) result += (weight + "");
+                    weight = entry[1];
+                }
+                result += entry[0];
+            } // so fucking ugly;
+            result += (weight + "")
+        return result
+    }
 }
 
 // 4. 渲染已選清單
@@ -206,11 +226,13 @@ function renderSelected(adding = false) {
         // again, fucking stupid variable name
 
         const w115Str = getSortedWeights(d115.科目倍數);
+        const w115Str4Copy = getSortedWeights(d115.科目倍數, true);
         const gsatStr = Object.entries(d115.學測標準 || {})
             .map(([sub, lvl]) => `${sub === "數A" || sub === "數B" || sub === "英聽" ? sub : sub.charAt(0)}: ${lvl.substring(0, 1)}`)
             .join(' ');
 
         const w114Str = d114 ? getSortedWeights(d114.科目倍數) : "無資料";
+        const w114Str4Copy = d114 ? getSortedWeights(d114.科目倍數, true) : "無資料";
         const isWeightChanged = w115Str !== w114Str;
         const scoreUrl = `https://dream-yee.github.io/asthma/?school=${item.uni}&dept=${item.dept}`; 
 
@@ -245,15 +267,15 @@ function renderSelected(adding = false) {
                 let pr_txt = d114["去學測組別代號"] !== null ? `前${astScoreDistribution[d114["去學測組別代號"]]["累積百分比"][Math.ceil(allTimesOne) + ""]}%` : "人數統計無資料"; // some statics is actually accessible if I do a little 排列組合 but Im lazy.
                 let pr_txt_pasta = d114["去學測組別代號"] !== null ? `(前${astScoreDistribution[d114["去學測組別代號"]]["累積百分比"][Math.ceil(allTimesOne) + ""]}%)` : "";
                 scoreDisplay = `你分科需均: <b style="color:var(--sage-dark)">${required.toFixed(2)} (${required > 60 ? "你就別想了" : pr_txt})</b>`;
-                copypasta[item.uni][item.dept] = `${w114Str} 你需: ${required.toFixed(2)} ${pr_txt_pasta}` 
+                copypasta[item.uni][item.dept] = `${w114Str4Copy} [${required.toFixed(2)} ${pr_txt_pasta}]` 
             } else {
                 // 回歸原始顯示
                 scoreDisplay = `平均 ${d114.一般考生錄取標準} (前${d114.達標比例}%)`;
-                copypasta[item.uni][item.dept] = `${w114Str} 平均: ${d114.一般考生錄取標準} (前${d114.達標比例}%)`;
+                copypasta[item.uni][item.dept] = `${w114Str4Copy} [${d114.一般考生錄取標準} (前${d114.達標比例}%)]`;
             }
 
             if (JSON.stringify(d115.科目倍數) !== JSON.stringify(d114?.科目倍數)) {
-                    copypasta[item.uni][item.dept] += ` | 今年 ${getSortedWeights(d115.科目倍數)}`;
+                    copypasta[item.uni][item.dept] += ` | 今年 ${w115Str4Copy}`;
             }
         }
 
@@ -346,10 +368,6 @@ copyBtn.addEventListener('click', () => {
 
     // 2. 構建純文字內容
     let text = "";
-
-    console.log(sortedUnis);
-    console.log(grouped);
-    
 
     for (const uni of sortedUnis) {
         text += `${uni}\n`; // 大學標題
