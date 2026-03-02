@@ -78,14 +78,14 @@ body {
     padding-left: 0px;
     color: var(--sage-dark);
     font-size: 14px;
-    line-height: 1.8;
+    line-height: 1.5;
 }
 
 .info-list p {
     margin-bottom: 8px;
     padding-left: 5px;
     border-left: 3px solid var(--sage-primary);
-    font-size: 14px;
+    font-size: 13px;
 }
 
 /* 簡單的淡入動畫 */
@@ -163,6 +163,12 @@ body {
     margin-bottom: 12px;
 }
 
+.last-year {
+    color: grey;
+    font-weight: normal;
+    font-size: 0.8rem;
+}
+
 .dept-header-row {
     display: flex;
     justify-content: space-between;
@@ -196,9 +202,13 @@ body {
     flex-shrink: 0;
 }
 
-.data-row.highlight-red .value {
+.highlight-red {
     color: #ab4700;
     font-weight: bold;
+}
+
+.value{
+    margin-left: 5px;
 }
 
 .dept-actions {
@@ -253,7 +263,7 @@ body {
 /* 側邊觸發標籤 */
 .island-trigger {
     position: absolute;
-    top: 70%;
+    top: 75%;
     right: 0;
     width: 30px;
     background-color: rgba(255, 255, 255, 0.8);
@@ -342,4 +352,61 @@ body {
     margin: 15px auto 0;
     opacity: 0;
     transition: opacity 0.3s;
+}
+
+/* --- Desktop 響應式優化 --- */
+@media (min-width: 1024px) {
+    
+    /* 1. 整體佈局改為雙欄 */
+    .app-container {
+        display: grid;
+        grid-template-columns: 1fr 450px; /* 左邊搜尋，右邊清單 */
+        gap: 30px;
+        max-width: 1200px;
+        margin: 0 5vh;
+        padding: 40px 20px;
+        height: 90vh;
+    }
+
+    /* 2. 讓右側清單固定（Sticky），滾動左邊時右邊不動 */
+    #selected-section {
+        position: sticky;
+        top: 20px;
+        height: calc(100vh - 100px);
+        overflow-y: auto;
+        background: #fdfdfd;
+        border-radius: 24px;
+        padding: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    }
+
+    /* 3. 已選卡片在寬螢幕下稍微縮減 padding */
+    .dept-item.selected {
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .dept-item.selected:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    }
+
+
+    /* 5. 搜尋結果改為 Grid 網格佈局，增加效率 */
+    #search-results {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 15px;
+    }
+
+    .info-list p {
+        font-size: 18px;
+    }
+}
+
+/* 針對超大螢幕 (如 2K 螢幕) 的寬度限制 */
+@media (min-width: 1600px) {
+    .app-container {
+        max-width: 1400px;
+        grid-template-columns: 1fr 500px;
+    }
 }

@@ -58,9 +58,10 @@ async function loadData() {
         instructionBox.id = "instruction-box";
         instructionBox.className = "instruction-box";
         instructionBox.innerHTML = `<ul class="info-list">
+                    <p>主要目的是希望你可以複製到記事本裡讓自己隨時可以拿出來幻想一下</p>
                     <p>可以輸入頂大 / 四大 / 四中 / 師北海，且有些校系可以簡寫</p>
                     <p>達標佔比是分數在 ⌈加權平均 x 科目數⌉ 以上的考生比例</p>
-                    <p>右下方學測按鈕點開會跑出可輸入學測<b>60級分制</b>分數的輸入框, <br>輸入後, 底下的列表及複製的結果將改為顯示你在分科所需要的平均分數</p>
+                    <p>右下方學測按鈕點開會出現學測<b>60級分制</b>分數的輸入框, <br>輸入後, 底下的列表及複製的結果將改為顯示你在分科所需要的平均分數</p>
                     <p><a class="link" href="../">單系歷年資料</a> / <a class="link" href="../comparison">大字&科目篩選版</a> / <a class="link" href="https://github.com/Dream-yee/anus_shrink_test">GitHub</a></p>
                     <p><a class="link" href="https://www.uac.edu.tw" target="_blank">考分會</a>資料連結: <a class="link" href="https://uac2.ncku.edu.tw/cross_search/" target="_blank">校系分則</a> / <a class="link" href="https://www.uac.edu.tw/uac114_note/" target="_blank">114</a> / <a class="link" href="https://www.uac.edu.tw/uac113_note/" target="_blank">113</a> / <a href="https://www.uac.edu.tw/uac112_note/" class="link" target="_blank">112</a></p>
                     <p>你可能想知道: <span id="input-suggesion" class="link"></span></p>
@@ -167,7 +168,12 @@ window.selectDept = (uni, dept, id) => {
 function getSortedWeights(weightObj) {
     if (!weightObj) return "無資料";
     return Object.entries(weightObj)
-        .sort((a, b) => b[1] - a[1])
+        .sort((a, b) => {
+            if(a[1] === b[1]) {
+                return a[0].localeCompare(b[0], 'zh-Hant');
+            }
+            else return b[1] - a[1];
+        })
         .map(([sub, val]) => `${sub.charAt(0) === "數" ? sub : sub.charAt(0) }: ${val}`) // 取首字，如「國文」->「國」
         .join(' ');
 }
@@ -201,11 +207,11 @@ function renderSelected(adding = false) {
 
         const w115Str = getSortedWeights(d115.科目倍數);
         const gsatStr = Object.entries(d115.學測標準 || {})
-            .map(([sub, lvl]) => `${sub.charAt(0) === "數" ? sub : sub.charAt(0)}: ${lvl.substring(0, 1)}`)
+            .map(([sub, lvl]) => `${sub === "數A" || sub === "數B" || sub === "英聽" ? sub : sub.charAt(0)}: ${lvl.substring(0, 1)}`)
             .join(' ');
 
         const w114Str = d114 ? getSortedWeights(d114.科目倍數) : "無資料";
-        const isWeightChanged = d114 && JSON.stringify(d115.科目倍數) !== JSON.stringify(d114.科目倍數);
+        const isWeightChanged = w115Str !== w114Str;
         const scoreUrl = `https://dream-yee.github.io/asthma/?school=${item.uni}&dept=${item.dept}`; 
 
         // --- 分科需均計算邏輯 ---
@@ -236,7 +242,7 @@ function renderSelected(adding = false) {
             if (userGsatWeightedSum > 0) {
                 const allTimesOne = required * astSubjects;
                 // 顯示計算結果，四捨五入到小數第二位
-                let pr_txt = d114["去學測組別代號"] !== null ? `前${astScoreDistribution[d114["去學測組別代號"]]["累積百分比"][Math.ceil(allTimesOne) + ""]}%` : "人數統計無資料";
+                let pr_txt = d114["去學測組別代號"] !== null ? `前${astScoreDistribution[d114["去學測組別代號"]]["累積百分比"][Math.ceil(allTimesOne) + ""]}%` : "人數統計無資料"; // some statics is actually accessible if I do a little 排列組合 but Im lazy.
                 let pr_txt_pasta = d114["去學測組別代號"] !== null ? `(前${astScoreDistribution[d114["去學測組別代號"]]["累積百分比"][Math.ceil(allTimesOne) + ""]}%)` : "";
                 scoreDisplay = `你分科需均: <b style="color:var(--sage-dark)">${required.toFixed(2)} (${required > 60 ? "你就別想了" : pr_txt})</b>`;
                 copypasta[item.uni][item.dept] = `${w114Str} 你需: ${required.toFixed(2)} ${pr_txt_pasta}` 
@@ -258,7 +264,7 @@ function renderSelected(adding = false) {
                 <div class="dept-header-row">
                     <div class="dept-titles">
                         <div class="uni-mini">${item.uni}</div>
-                        <div class="dept-name-bold">${item.dept}</div>
+                        <div class="dept-name-bold">${item.dept} <span class="last-year">${d114.校系名稱 !== item.dept ? "(去年: " + d114.校系名稱 + ")" : ""}</span></div>
                     </div>
                     <div class="delete-btn" onclick="removeDept(${index}, '${d115.id}')">[X]</div>
                 </div>
@@ -270,11 +276,11 @@ function renderSelected(adding = false) {
                         <span class="data-separator">|</span>
                         <span class="value">${scoreDisplay}</span>
                     </div>
-                    <div class="data-row ${isWeightChanged ? 'highlight-red' : ''}">
+                    <div class="data-row">
                         <span class="label">今年: </span>
-                        <span class="value">${w115Str}</span>
+                        <span class="${isWeightChanged ? 'highlight-red' : ''} value">${w115Str}</span>
                         <span class="data-separator">|</span>
-                        <span class="">${gsatStr || '無'}</span>
+                        <span class="value">${gsatStr || '無'}</span>
                     </div>
                 </div>
 
@@ -349,7 +355,7 @@ copyBtn.addEventListener('click', () => {
         text += `${uni}\n`; // 大學標題
 
         grouped[uni].forEach(dept => {
-            text += `${copypasta[uni][dept]}\n`;
+            text += `${dept} ${copypasta[uni][dept]}\n`;
         });
         
         text += "\n"; // 大學之間空一行
@@ -379,6 +385,8 @@ function debounce(func, delay = 50) {
 // 切換開關
 function toggleGsatIsland() {
     document.getElementById('gsat-island').classList.toggle('active');
+    let text = document.getElementById('trigger-text');
+    text.textContent = text.textContent === "學測" ? "收回" : "學測"
 }
 
 // 初始化監聽器
