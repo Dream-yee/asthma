@@ -185,7 +185,7 @@ body {
     background: var(--sage-light);
     padding: 10px;
     border-radius: 8px;
-    font-size: 12px;
+    font-size: 11px;
     display: flex;
     flex-direction: column;
     gap: 4px;
@@ -360,7 +360,7 @@ body {
     /* 1. 整體佈局改為雙欄 */
     .app-container {
         display: grid;
-        grid-template-columns: 1fr 450px; /* 左邊搜尋，右邊清單 */
+        grid-template-columns: 1fr 1fr; /* 左邊搜尋，右邊清單 */
         gap: 30px;
         max-width: 1200px;
         margin: 0 5vh;
@@ -401,12 +401,15 @@ body {
     .info-list p {
         font-size: 18px;
     }
+
+    .dept-comparison {
+        font-size: 15px;
+    }
 }
 
 /* 針對超大螢幕 (如 2K 螢幕) 的寬度限制 */
 @media (min-width: 1600px) {
     .app-container {
         max-width: 1400px;
-        grid-template-columns: 1fr 500px;
     }
 }
