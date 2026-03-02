@@ -189,7 +189,13 @@ body {
     display: flex;
     flex-direction: column;
     gap: 4px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    flex-shrink: 0;
+    white-space: nowrap;
 }
+
+.dept-comparison::-webkit-scrollbar { display: none; }
 
 .data-row {
     display: flex;
