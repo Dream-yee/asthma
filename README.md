@@ -3,6 +3,8 @@ https://dream-yee.github.io/asthma/
 
 https://dream-yee.github.io/asthma/comparison
 
+https://dream-yee.github.io/asthma/Ross
+
 這是一個紀錄今年跟往年分科的一些資料的網頁
 
 因為我重考考到太悶了決定給自己休息時間，但只是休息太無聊了所以靠AI做了這個
