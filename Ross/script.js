@@ -1,7 +1,8 @@
 // main.js
 const searchInput = document.getElementById('main-search');
 const suggestionList = document.getElementById('suggestion-list');
-const instructionBox = document.createElement("div");
+const instructionBoxLeft = document.createElement("div");
+const instructionBoxRight = document.createElement("div");
 const selectedList = document.getElementById('selected-list');
 const scoreInputs = document.getElementsByClassName('score-input')
 const copyBtn = document.getElementById('copy-btn');
@@ -55,18 +56,25 @@ async function loadData() {
         astScoreDistribution = await response1.json();
 
         // stupid instruction
-        instructionBox.id = "instruction-box";
-        instructionBox.className = "instruction-box";
-        instructionBox.innerHTML = `<ul class="info-list">
-                    <p>主要目的是希望你可以複製到記事本裡讓自己隨時可以拿出來幻想一下</p>
+        instructionBoxLeft.id = "instruction-box-left";
+        instructionBoxLeft.className = "instruction-box";
+        instructionBoxLeft.innerHTML = `<ul class="info-list">
                     <p>可以輸入頂大 / 四大 / 四中 / 師北海，且有些校系可以簡寫</p>
                     <p>達標佔比是分數在 ⌈加權平均 x 科目數⌉ 以上的考生比例</p>
-                    <p>右下方學測按鈕點開會出現學測<b>60級分制</b>分數的輸入框, <br>輸入後, 底下的列表及複製的結果將改為顯示你在分科所需要的平均分數</p>
                     <p><a class="link" href="../">單系歷年資料</a> / <a class="link" href="../comparison">大字&科目篩選版</a> / <a class="link" href="https://github.com/Dream-yee/anus_shrink_test">GitHub</a></p>
                     <p><a class="link" href="https://www.uac.edu.tw" target="_blank">考分會</a>資料連結: <a class="link" href="https://uac2.ncku.edu.tw/cross_search/" target="_blank">校系分則</a> / <a class="link" href="https://www.uac.edu.tw/uac114_note/" target="_blank">114</a> / <a class="link" href="https://www.uac.edu.tw/uac113_note/" target="_blank">113</a> / <a href="https://www.uac.edu.tw/uac112_note/" class="link" target="_blank">112</a></p>
                     <p>你可能想知道: <span id="input-suggesion" class="link"></span></p>
                 </ul>`
-        suggestionList.appendChild(instructionBox);
+
+        instructionBoxRight.id = "instruction-box-right";
+        instructionBoxRight.className = "instruction-box";
+        instructionBoxRight.innerHTML = `<ul class="info-list">
+                    <p>主要目的是希望你可以複製到記事本裡讓自己隨時可以拿出來幻想一下</p>
+                    <p>你要搜尋然後點選校系這個地方才會有東西</p>
+                    <p>右方學測按鈕點開會出現學測<b>60級分制</b>分數的輸入框, <br>輸入後, 底下的列表及複製的結果將改為顯示你在分科所需要的平均分數</p>
+                </ul>`
+        suggestionList.appendChild(instructionBoxLeft);
+        selectedList.appendChild(instructionBoxRight);
         let inputSuggestion = document.getElementById("input-suggesion");
 
 
@@ -84,7 +92,7 @@ async function loadData() {
 function searching(query) {
     // 開始搜尋：移除置中類別
     suggestionList.classList.remove('centered');
-    instructionBox.classList.add('hide')
+    instructionBoxLeft.classList.add('hide')
     // 呼叫你的 API
     const results = searchEngine.get_result(query);
     renderSuggestions(results);
@@ -96,9 +104,9 @@ searchInput.addEventListener('input', debounce((e) => {
     if (query === '') {
         // 回復初始狀態：置中並顯示說明
         suggestionList.innerHTML = '';
-        suggestionList.appendChild(instructionBox);
+        suggestionList.appendChild(instructionBoxLeft);
         suggestionList.classList.add('centered');
-        instructionBox.classList.remove('hide')
+        instructionBoxLeft.classList.remove('hide')
         return;
     }
     searching(query)
@@ -124,8 +132,6 @@ function renderSuggestions(results, append = false) {
 
     if (document.getElementById("load-more-trigger") !== null)
         document.getElementById("load-more-trigger").remove() // 很屎的做法但算了反正 it works
-
-    console.log(selectedDeptsIds);
 
 
     for (const x of candidates) {
@@ -296,6 +302,7 @@ function renderSelected(adding = false) {
             copypasta[item.uni][item.dept] = pastaCache.join('\n');
         }
 
+        document.getElementById(`dept_${d115.id}`).setAttribute('onclick', `removeDept(${index}, '${d115.id}')`)
 
         selectedDeptsIds.push(d115.id);
 
@@ -304,7 +311,7 @@ function renderSelected(adding = false) {
                 <div class="dept-header-row">
                     <div class="dept-titles">
                         <div class="uni-mini">${item.uni}</div>
-                        <div class="dept-name-bold">${item.dept} <span class="last-year">${deptData[CURRENT_YEAR - 1 + ""] !== undefined && deptData[CURRENT_YEAR - 1 + ""].length === 1 && deptData[CURRENT_YEAR - 1 + ""][0].校系名稱 !== item.dept ? "(去年: " + deptData[CURRENT_YEAR - 1 + ""].校系名稱 + ")" : ""}</span></div>
+                        <div class="dept-name-bold">${item.dept} <span class="last-year">${deptData[CURRENT_YEAR - 1 + ""] !== undefined && deptData[CURRENT_YEAR - 1 + ""].length === 1 && deptData[CURRENT_YEAR - 1 + ""][0].校系名稱 !== item.dept ? "(去年: " + deptData[CURRENT_YEAR - 1 + ""][0].校系名稱 + ")" : ""}</span></div>
                     </div>
                     <div class="delete-btn" onclick="removeDept(${index}, '${d115.id}')">[X]</div>
                 </div>
@@ -334,14 +341,26 @@ function renderSelected(adding = false) {
         `;
     }).join('');
 
+
+    if(selectedDepts.length === 0) {
+        selectedList.appendChild(instructionBoxRight);
+        selectedList.classList.add('centered');
+        instructionBoxRight.classList.remove('hide');
+    } else {
+        selectedList.classList.remove('centered');
+        instructionBoxRight.classList.add('hide')
+    }
+
     if (adding) selectedList.scrollTo({ top: selectedList.scrollHeight, behavior: 'smooth' });
 }
 
 // 移除校系的功能
 function removeDept(index, id) {
-    selectedDepts.splice(index, 1);
-    if (document.getElementById(`dept_${id}`) !== null)
+    if (document.getElementById(`dept_${id}`) !== null){
         document.getElementById(`dept_${id}`).classList.remove("suggestion_selected");
+        document.getElementById(`dept_${id}`).setAttribute('onclick', `selectDept('${selectedDepts[index].uni}', '${selectedDepts[index].dept}', '${id}')`)
+    }
+    selectedDepts.splice(index, 1);
     renderSelected();
 }
 

@@ -150,7 +150,7 @@ body {
     background-color: #4e5a5624;
 }
 
-.dept-item.suggestion_selected, .suggestion-section .dept-item:hover  {
+.dept-item.suggestion_selected {
     background: var(--sage-light);
     color: var(--sage-dark);
 }
@@ -250,10 +250,6 @@ body {
     cursor: pointer;
     font-weight: bold;
     padding: 5px;
-}
-
-.delete-btn:hover {
-    color: #e74c3c;
 }
 
 .data-separator {
@@ -415,6 +411,15 @@ body {
 
     .dept-comparison {
         font-size: 15px;
+    }
+
+    .delete-btn:hover {
+        color: #e74c3c;
+    }
+
+    .suggestion-section .dept-item:hover  {
+        background: var(--sage-light);
+        color: var(--sage-dark);
     }
 }
 
