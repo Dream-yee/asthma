@@ -226,65 +226,76 @@ function renderSelected(adding = false) {
             .map(([sub, lvl]) => `${sub === "數A" || sub === "數B" || sub === "英聽" ? sub : sub.charAt(0)}: ${lvl.substring(0, 1)}`)
             .join(' ');
         let isWeightChanged = false;
-
-        if (deptData[CURRENT_YEAR - 1 + ""] !== undefined) {
-            for (const d114 of deptData[CURRENT_YEAR - 1 + ""]) {
-                
-            }
-        }
-
-        const d114 = deptData[CURRENT_YEAR - 1 + ""] ? deptData[CURRENT_YEAR - 1 + ""][0] : null;
-        // stupid variable name
-        // d115 is this year and d114 is the previous year
-        // again, fucking stupid variable name
-
-        const w114Str = d114 ? getSortedWeights(d114.科目倍數) : "無資料";
-        const w114Str4Copy = d114 ? getSortedWeights(d114.科目倍數, true) : "無資料";
-        // const isWeightChanged = w115Str !== w114Str;
         const scoreUrl = `https://dream-yee.github.io/asthma/?school=${item.uni}&dept=${item.dept}`;
 
-        // --- 分科需均計算邏輯 ---
-        let scoreDisplay = "無資料";
-        if (copypasta[item.uni] === undefined) copypasta[item.uni] = {};
-        if (d114) {
-            const weights = d114.科目倍數;
-            let goal = d114.一般考生錄取標準總分;
+        let historyScoreText = "";
 
-            let userGsatWeightedSum = 0;
-            let subtestWeightsSum = 0;
-            let astSubjects = 0;
-            let weightsSum = 0;
+        if (deptData[CURRENT_YEAR - 1 + ""] !== undefined) {
+            let pastaCache = [];
+            for (const d114 of deptData[CURRENT_YEAR - 1 + ""]) {
 
-            Object.entries(weights).forEach(([sub, weight]) => {
-                if (gsatMapping[sub] === undefined) {
-                    subtestWeightsSum += weight;
-                    astSubjects++;
-                } else if (gsatMapping[sub] !== "") {
-                    goal -= parseFloat(gsatMapping[sub]) * weight;
-                    userGsatWeightedSum += weight;
+                // stupid variable name
+                // d115 is this year and d114 is the previous year
+                // again, fucking stupid variable name
+
+                const w114Str = d114 ? getSortedWeights(d114.科目倍數) : "無資料";
+                const w114Str4Copy = d114 ? getSortedWeights(d114.科目倍數, true) : "無資料";
+                isWeightChanged = w115Str !== w114Str || isWeightChanged;
+
+                // --- 分科需均計算邏輯 ---
+                let scoreDisplay = "無資料";
+                if (copypasta[item.uni] === undefined) copypasta[item.uni] = {};
+
+                const weights = d114.科目倍數;
+                let goal = d114.一般考生錄取標準總分;
+
+                let userGsatWeightedSum = 0;
+                let subtestWeightsSum = 0;
+                let astSubjects = 0;
+                let weightsSum = 0;
+
+                Object.entries(weights).forEach(([sub, weight]) => {
+                    if (gsatMapping[sub] === undefined) {
+                        subtestWeightsSum += weight;
+                        astSubjects++;
+                    } else if (gsatMapping[sub] !== "") {
+                        goal -= parseFloat(gsatMapping[sub]) * weight;
+                        userGsatWeightedSum += weight;
+                    }
+                    weightsSum += weight;
+                });
+
+                // 如果有學測成績，且有需要考分科科目s
+                const required = goal / subtestWeightsSum;
+                if (userGsatWeightedSum > 0) {
+                    const allTimesOne = required * astSubjects;
+                    // 顯示計算結果，四捨五入到小數第二位
+                    let pr_txt = d114["去學測組別代號"] !== null ? `前${astScoreDistribution[d114["去學測組別代號"]]["累積百分比"][Math.ceil(allTimesOne) + ""]}%` : "人數統計無資料"; // some statics is actually accessible if I do a little 排列組合 but Im lazy.
+                    let pr_txt_pasta = d114["去學測組別代號"] !== null ? `(前${astScoreDistribution[d114["去學測組別代號"]]["累積百分比"][Math.ceil(allTimesOne) + ""]}%)` : "";
+                    scoreDisplay = `你分科需均: <b style="color:var(--sage-dark)">${required.toFixed(2)} (${required > 60 ? "你就別想了" : pr_txt})</b>`;
+                    pastaCache.push(`${w114Str4Copy} [${required.toFixed(2)} ${pr_txt_pasta}] ${d114["校系名稱"] !== item.dept ? `(${d114["校系名稱"]})` : ""}`)
+                } else {
+                    // 回歸原始顯示
+                    scoreDisplay = `平均 ${d114.一般考生錄取標準} (前${d114.達標比例}%)`;
+                    pastaCache.push(`${w114Str4Copy} [${d114.一般考生錄取標準} (前${d114.達標比例}%)] ${d114["校系名稱"] !== item.dept ? `(${d114["校系名稱"]})` : ""}`);
                 }
-                weightsSum += weight;
-            });
+                historyScoreText += `
+                        <span class="last-year above-standards">${deptData[CURRENT_YEAR - 1 + ""].length > 1 ? "(" + d114.校系名稱 + ")" : ""}</span>
+                        <div class="data-row">
+                        <span class="label">去年: </span>
+                        <span class="value">${w114Str}</span> 
+                        <span class="data-separator">|</span>
+                        <span class="value">${scoreDisplay}</span>
+                    </div>`
 
-            // 如果有學測成績，且有需要考分科科目s
-            const required = goal / subtestWeightsSum;
-            if (userGsatWeightedSum > 0) {
-                const allTimesOne = required * astSubjects;
-                // 顯示計算結果，四捨五入到小數第二位
-                let pr_txt = d114["去學測組別代號"] !== null ? `前${astScoreDistribution[d114["去學測組別代號"]]["累積百分比"][Math.ceil(allTimesOne) + ""]}%` : "人數統計無資料"; // some statics is actually accessible if I do a little 排列組合 but Im lazy.
-                let pr_txt_pasta = d114["去學測組別代號"] !== null ? `(前${astScoreDistribution[d114["去學測組別代號"]]["累積百分比"][Math.ceil(allTimesOne) + ""]}%)` : "";
-                scoreDisplay = `你分科需均: <b style="color:var(--sage-dark)">${required.toFixed(2)} (${required > 60 ? "你就別想了" : pr_txt})</b>`;
-                copypasta[item.uni][item.dept] = `${w114Str4Copy} [${required.toFixed(2)} ${pr_txt_pasta}]`
-            } else {
-                // 回歸原始顯示
-                scoreDisplay = `平均 ${d114.一般考生錄取標準} (前${d114.達標比例}%)`;
-                copypasta[item.uni][item.dept] = `${w114Str4Copy} [${d114.一般考生錄取標準} (前${d114.達標比例}%)]`;
-            }
+                if (JSON.stringify(d115.科目倍數) !== JSON.stringify(d114?.科目倍數)) {
+                    copypasta[item.uni][item.dept] += ` | 今年 ${w115Str4Copy}`;
+                }
 
-            if (JSON.stringify(d115.科目倍數) !== JSON.stringify(d114?.科目倍數)) {
-                copypasta[item.uni][item.dept] += ` | 今年 ${w115Str4Copy}`;
             }
+            copypasta[item.uni][item.dept] = pastaCache.join('\n');
         }
+
 
         selectedDeptsIds.push(d115.id);
 
@@ -293,18 +304,13 @@ function renderSelected(adding = false) {
                 <div class="dept-header-row">
                     <div class="dept-titles">
                         <div class="uni-mini">${item.uni}</div>
-                        <div class="dept-name-bold">${item.dept} <span class="last-year">${d114 !== null && d114.校系名稱 !== item.dept ? "(去年: " + d114.校系名稱 + ")" : ""}</span></div>
+                        <div class="dept-name-bold">${item.dept} <span class="last-year">${deptData[CURRENT_YEAR - 1 + ""] !== undefined && deptData[CURRENT_YEAR - 1 + ""].length === 1 && deptData[CURRENT_YEAR - 1 + ""][0].校系名稱 !== item.dept ? "(去年: " + deptData[CURRENT_YEAR - 1 + ""].校系名稱 + ")" : ""}</span></div>
                     </div>
                     <div class="delete-btn" onclick="removeDept(${index}, '${d115.id}')">[X]</div>
                 </div>
 
                 <div class="dept-comparison">
-                    <div class="data-row">
-                        <span class="label">去年: </span>
-                        <span class="value">${w114Str}</span> 
-                        <span class="data-separator">|</span>
-                        <span class="value">${scoreDisplay}</span>
-                    </div>
+                    ${historyScoreText}
                     <div class="data-row">
                         <span class="label">今年: </span>
                         <span class="${isWeightChanged ? 'highlight-red' : ''} value">${w115Str}</span>

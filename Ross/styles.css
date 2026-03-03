@@ -169,6 +169,11 @@ body {
     font-size: 0.8rem;
 }
 
+.above-standards {
+    margin-top: 5px;
+    margin-bottom: 0;
+}
+
 .dept-header-row {
     display: flex;
     justify-content: space-between;
