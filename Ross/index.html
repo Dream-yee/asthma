@@ -26,30 +26,33 @@
                 <span>點我複製</span>
             </button>
         </section>
+    </div>
 
-        <div class="island-trigger" onclick="toggleGsatIsland()">
-            <span id="trigger-text" class="trigger-text">學測</span>
-        </div>
-        <div id="gsat-island" class="gsat-island">
+        <div>
+            <div class="island-trigger" onclick="toggleGsatIsland()">
+                <span id="trigger-text" class="trigger-text">學測</span>
+            </div>
+            <div id="gsat-island" class="gsat-island">
 
-            <div class="island-content">
-                <div class="score-minimal-list">
-                    <input type="number" class="score-input" data-previous id="gsat-chi" data-next="gsat-eng" placeholder="國文" min="0"
-                        max="60">
-                    <input type="number" class="score-input" data-previous="gsat-chi" id="gsat-eng" data-next="gsat-mathA" placeholder="英文"
-                        min="0" max="60">
-                    <input type="number" class="score-input" data-previous="gsat-eng" id="gsat-mathA" data-next="gsat-mathB" placeholder="數A"
-                        min="0" max="60">
-                    <input type="number" class="score-input" data-previous="gsat-mathA" id="gsat-mathB" data-next="gsat-sci" placeholder="數B"
-                        min="0" max="60">
-                    <input type="number" class="score-input" data-previous="gsat-mathB" id="gsat-sci" data-next="gsat-soc" placeholder="自然" min="0"
-                        max="60">
-                    <input type="number" class="score-input" data-previous="gsat-sci" id="gsat-soc" placeholder="社會" min="0" max="60">
+                <div class="island-content">
+                    <div class="score-minimal-list">
+                        <input type="number" class="score-input" data-previous id="gsat-chi" data-next="gsat-eng"
+                            placeholder="國文" min="0" max="60">
+                        <input type="number" class="score-input" data-previous="gsat-chi" id="gsat-eng"
+                            data-next="gsat-mathA" placeholder="英文" min="0" max="60">
+                        <input type="number" class="score-input" data-previous="gsat-eng" id="gsat-mathA"
+                            data-next="gsat-mathB" placeholder="數A" min="0" max="60">
+                        <input type="number" class="score-input" data-previous="gsat-mathA" id="gsat-mathB"
+                            data-next="gsat-sci" placeholder="數B" min="0" max="60">
+                        <input type="number" class="score-input" data-previous="gsat-mathB" id="gsat-sci"
+                            data-next="gsat-soc" placeholder="自然" min="0" max="60">
+                        <input type="number" class="score-input" data-previous="gsat-sci" id="gsat-soc" placeholder="社會"
+                            min="0" max="60">
+                    </div>
+                    <div class="status-dot" id="save-status-dot" title="已自動存檔"></div>
                 </div>
-                <div class="status-dot" id="save-status-dot" title="已自動存檔"></div>
             </div>
         </div>
-    </div>
 </body>
 <script src="script.js"></script>
 
