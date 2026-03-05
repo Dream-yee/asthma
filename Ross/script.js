@@ -9,13 +9,15 @@ const copyBtn = document.getElementById('copy-btn');
 
 
 let selectedDepts = [];
-let selectedDeptsIds = [];
+let selectedDeptsIndexes = {};
 
 let CURRENT_YEAR = 115;
 
 let schoolData = {};
 let astScoreDistribution = {};
 let searchEngine;
+
+let gsatInputed = false;
 
 let copypasta = {};
 
@@ -142,7 +144,7 @@ function renderSuggestions(results, append = false) {
         let deptId = schoolData[x.item.uni][x.item.dept][CURRENT_YEAR + ""].id;
 
         suggestionList.innerHTML += `
-        <div id="dept_${deptId}" class="dept-item ${uniNumber % 2 === 0 ? 'light-grey' : 'dark-grey'} ${selectedDeptsIds.includes(deptId) ? 'suggestion_selected' : ''}" onclick="selectDept('${x.item.uni}', '${x.item.dept}', '${deptId}')">
+        <div id="dept_${deptId}" class="dept-item ${uniNumber % 2 === 0 ? 'light-grey' : 'dark-grey'} ${selectedDeptsIndexes[deptId] !== undefined ? 'suggestion_selected' : '' }" onclick="${selectedDeptsIndexes[deptId] !== undefined ? `removeDept(${selectedDeptsIndexes[deptId]}, '${deptId}')` : `selectDept('${x.item.uni}', '${x.item.dept}', '${deptId}')`}">
             <strong>${x.item.uni}</strong> ${x.item.dept}
         </div>
     `
@@ -181,7 +183,7 @@ function getSortedWeights(weightObj, forCopy = false) {
                 }
                 else return b[1] - a[1];
             })
-            .map(([sub, val]) => `${sub.charAt(0) === "數" ? sub : sub.charAt(0)}: ${val}`) // 取首字，如「國文」->「國」
+            .map(([sub, val]) => `${sub.charAt(0) === "數" ? sub : sub.charAt(0)}: ${val}`)
             .join(' ');
     else {
         let weight = null, result = "";
@@ -192,7 +194,7 @@ function getSortedWeights(weightObj, forCopy = false) {
                 }
                 else return b[1] - a[1];
             })
-            .map(([sub, val]) => [sub.charAt(0) === "數" ? sub : sub.charAt(0), val])) {
+            .map(([sub, val]) => [sub.charAt(0) === "數" ? sub.charAt(1) : sub.charAt(0), val])) {
             if (weight !== entry[1]) {
                 if (weight !== null) result += (weight + "");
                 weight = entry[1];
@@ -206,7 +208,8 @@ function getSortedWeights(weightObj, forCopy = false) {
 
 // 4. 渲染已選清單
 function renderSelected(adding = false) {
-    selectedDeptsIds = [];
+    selectedDeptsIndexes = [];
+    gsatInputed = false;
 
     // 定義學測科目對應 key (這要跟你的 schoolData 內的 key 匹配)
     const gsatMapping = {
@@ -217,9 +220,6 @@ function renderSelected(adding = false) {
         "自然": scoreInputs[4].value,
         "社會": scoreInputs[5].value,
     }
-
-    console.log(gsatMapping);
-
 
     selectedList.innerHTML = selectedDepts.map((item, index) => {
         const deptData = schoolData[item.uni][item.dept];
@@ -279,14 +279,15 @@ function renderSelected(adding = false) {
                     let pr_txt = d114["去學測組別代號"] !== null ? `前${astScoreDistribution[d114["去學測組別代號"]]["累積百分比"][Math.ceil(allTimesOne) + ""]}%` : "人數統計無資料"; // some statics is actually accessible if I do a little 排列組合 but Im lazy.
                     let pr_txt_pasta = d114["去學測組別代號"] !== null ? `(前${astScoreDistribution[d114["去學測組別代號"]]["累積百分比"][Math.ceil(allTimesOne) + ""]}%)` : "";
                     scoreDisplay = `你分科需均: <b style="color:var(--sage-dark)">${required.toFixed(2)} (${required > 60 ? "你就別想了" : pr_txt})</b>`;
-                    pastaCache.push(`${w114Str4Copy} [${required.toFixed(2)} ${pr_txt_pasta}] ${d114["校系名稱"] !== item.dept ? `(${d114["校系名稱"]})` : ""}`)
+                    pastaCache.push(`${item.dept} ${w114Str4Copy} [${required.toFixed(2)} ${pr_txt_pasta}]${d114["校系名稱"] !== item.dept ? ` (${d114["校系名稱"]})` : ""}`)
+                    gsatInputed = true;
                 } else {
                     // 回歸原始顯示
                     scoreDisplay = `平均 ${d114.一般考生錄取標準} (前${d114.達標比例}%)`;
-                    pastaCache.push(`${w114Str4Copy} [${d114.一般考生錄取標準} (前${d114.達標比例}%)] ${d114["校系名稱"] !== item.dept ? `(${d114["校系名稱"]})` : ""}`);
+                    pastaCache.push(`${item.dept} ${w114Str4Copy} [${d114.一般考生錄取標準} (前${d114.達標比例}%)] ${d114["校系名稱"] !== item.dept ? `(${d114["校系名稱"]})` : ""}`);
                 }
                 historyScoreText += `
-                        <span class="last-year above-standards">${deptData[CURRENT_YEAR - 1 + ""].length > 1 ? "(" + d114.校系名稱 + ")" : ""}</span>
+                        ${deptData[CURRENT_YEAR - 1 + ""].length > 1 ? "<span class='last-year above-standards'>(" + d114.校系名稱 + ")</span>" : ""}
                         <div class="data-row">
                         <span class="label">去年: </span>
                         <span class="value">${w114Str}</span> 
@@ -294,17 +295,16 @@ function renderSelected(adding = false) {
                         <span class="value">${scoreDisplay}</span>
                     </div>`
 
-                if (JSON.stringify(d115.科目倍數) !== JSON.stringify(d114?.科目倍數)) {
-                    copypasta[item.uni][item.dept] += ` | 今年 ${w115Str4Copy}`;
+                if (getSortedWeights(d115.科目倍數) !== getSortedWeights(d114?.科目倍數)) {
+                    pastaCache[pastaCache.length - 1] += ` | 今年 ${w115Str4Copy}`;
                 }
-
             }
             copypasta[item.uni][item.dept] = pastaCache.join('\n');
         }
 
-        document.getElementById(`dept_${d115.id}`).setAttribute('onclick', `removeDept(${index}, '${d115.id}')`)
+        document.getElementById(`dept_${d115.id}`)?.setAttribute('onclick', `removeDept(${index}, '${d115.id}')`)
 
-        selectedDeptsIds.push(d115.id);
+        selectedDeptsIndexes[d115.id] = index;
 
         return `
             <div class="dept-item selected">
@@ -342,7 +342,7 @@ function renderSelected(adding = false) {
     }).join('');
 
 
-    if(selectedDepts.length === 0) {
+    if (selectedDepts.length === 0) {
         selectedList.appendChild(instructionBoxRight);
         selectedList.classList.add('centered');
         instructionBoxRight.classList.remove('hide');
@@ -356,9 +356,10 @@ function renderSelected(adding = false) {
 
 // 移除校系的功能
 function removeDept(index, id) {
-    if (document.getElementById(`dept_${id}`) !== null){
+    if (document.getElementById(`dept_${id}`) !== null) {
         document.getElementById(`dept_${id}`).classList.remove("suggestion_selected");
         document.getElementById(`dept_${id}`).setAttribute('onclick', `selectDept('${selectedDepts[index].uni}', '${selectedDepts[index].dept}', '${id}')`)
+        selectedDeptsIndexes[index] = undefined;
     }
     selectedDepts.splice(index, 1);
     renderSelected();
@@ -399,13 +400,34 @@ copyBtn.addEventListener('click', () => {
     });
 
     // 2. 構建純文字內容
-    let text = "";
+    let text = '';
+
+    if (gsatInputed) {
+        const gsatMapping = {
+            "國文": scoreInputs[0].value,
+            "英文": scoreInputs[1].value,
+            "數A": scoreInputs[2].value,
+            "數B": scoreInputs[3].value,
+            "自然": scoreInputs[4].value,
+            "社會": scoreInputs[5].value,
+        }
+
+        text = "你所複製的是以";
+        for(const entry of Object.entries(gsatMapping)) {
+            if(entry[1] !== "")
+                text += `\n${entry[0]}: ${entry[1]}`
+        }
+        text += "\n為根據後，在分科所需的平均及其統計資料\n\n\n"
+        
+    } else {
+        text = "你所複製的是最原始的錄取分數平均及統計資料\n\n\n"
+    }
 
     for (const uni of sortedUnis) {
         text += `${uni}\n`; // 大學標題
 
         grouped[uni].forEach(dept => {
-            text += `${dept} ${copypasta[uni][dept]}\n`;
+            text += `${copypasta[uni][dept]}\n`;
         });
 
         text += "\n"; // 大學之間空一行
