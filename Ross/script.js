@@ -61,19 +61,17 @@ async function loadData() {
         instructionBoxLeft.id = "instruction-box-left";
         instructionBoxLeft.className = "instruction-box";
         instructionBoxLeft.innerHTML = `<ul class="info-list">
-                    <p>可以輸入頂大 / 四大 / 四中 / 師北海，且有些校系可以簡寫</p>
-                    <p>達標佔比是分數在 ⌈加權平均 x 科目數⌉ 以上的考生比例</p>
-                    <p><a class="link" href="../">單系歷年資料</a> / <a class="link" href="../comparison">搜尋快速檢視</a> / <a class="link" href="https://github.com/Dream-yee/anus_shrink_test">GitHub</a></p>
-                    <p><a class="link" href="https://www.uac.edu.tw" target="_blank">考分會</a>資料連結: <a class="link" href="https://uac2.ncku.edu.tw/cross_search/" target="_blank">校系分則</a> / <a class="link" href="https://www.uac.edu.tw/uac114_note/" target="_blank">114</a> / <a class="link" href="https://www.uac.edu.tw/uac113_note/" target="_blank">113</a> / <a href="https://www.uac.edu.tw/uac112_note/" class="link" target="_blank">112</a></p>
+                    <p>主要目的是希望你可以複製到記事本裡讓自己隨時可以拿出來幻想一下</p>
+                    <p>最右方學測按鈕點開會出現學測<b>60級分制</b>分數的輸入框, <br>輸入後, 下方列表及複製的結果將改為顯示你在分科所需要的平均分數</p>
                     <p>你可能想知道: <span id="input-suggesion" class="link"></span></p>
                 </ul>`
 
         instructionBoxRight.id = "instruction-box-right";
         instructionBoxRight.className = "instruction-box";
         instructionBoxRight.innerHTML = `<ul class="info-list">
-                    <p>主要目的是希望你可以複製到記事本裡讓自己隨時可以拿出來幻想一下</p>
                     <p>你要搜尋然後點選校系這個地方才會有東西</p>
-                    <p>右方學測按鈕點開會出現學測<b>60級分制</b>分數的輸入框, <br>輸入後, 底下的列表及複製的結果將改為顯示你在分科所需要的平均分數</p>
+                    <p><a class="link" href="../">單系歷年資料</a> / <a class="link" href="../comparison">搜尋快速檢視</a> / <a class="link" href="https://github.com/Dream-yee/anus_shrink_test">GitHub</a></p>
+                    <p><a class="link" href="https://www.uac.edu.tw" target="_blank">考分會</a>資料連結: <a class="link" href="https://uac2.ncku.edu.tw/cross_search/" target="_blank">校系分則</a> / <a class="link" href="https://www.uac.edu.tw/uac114_note/" target="_blank">114</a> / <a class="link" href="https://www.uac.edu.tw/uac113_note/" target="_blank">113</a> / <a href="https://www.uac.edu.tw/uac112_note/" class="link" target="_blank">112</a></p>
                 </ul>`
         suggestionList.appendChild(instructionBoxLeft);
         selectedList.appendChild(instructionBoxRight);
