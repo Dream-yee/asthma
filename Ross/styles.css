@@ -270,7 +270,7 @@ body {
 /* 側邊觸發標籤 */
 .island-trigger {
     position: absolute;
-    top: 75%;
+    top: 80%;
     right: 0;
     width: 30px;
     background-color: rgba(255, 255, 255, 0.8);
