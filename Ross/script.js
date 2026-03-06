@@ -63,7 +63,7 @@ async function loadData() {
         instructionBoxLeft.innerHTML = `<ul class="info-list">
                     <p>可以輸入頂大 / 四大 / 四中 / 師北海，且有些校系可以簡寫</p>
                     <p>達標佔比是分數在 ⌈加權平均 x 科目數⌉ 以上的考生比例</p>
-                    <p><a class="link" href="../">單系歷年資料</a> / <a class="link" href="../comparison">大字&科目篩選版</a> / <a class="link" href="https://github.com/Dream-yee/anus_shrink_test">GitHub</a></p>
+                    <p><a class="link" href="../">單系歷年資料</a> / <a class="link" href="../comparison">搜尋快速檢視</a> / <a class="link" href="https://github.com/Dream-yee/anus_shrink_test">GitHub</a></p>
                     <p><a class="link" href="https://www.uac.edu.tw" target="_blank">考分會</a>資料連結: <a class="link" href="https://uac2.ncku.edu.tw/cross_search/" target="_blank">校系分則</a> / <a class="link" href="https://www.uac.edu.tw/uac114_note/" target="_blank">114</a> / <a class="link" href="https://www.uac.edu.tw/uac113_note/" target="_blank">113</a> / <a href="https://www.uac.edu.tw/uac112_note/" class="link" target="_blank">112</a></p>
                     <p>你可能想知道: <span id="input-suggesion" class="link"></span></p>
                 </ul>`
