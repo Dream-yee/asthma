@@ -63,6 +63,7 @@ async function loadData() {
         instructionBoxLeft.innerHTML = `<ul class="info-list">
                     <p>主要目的是希望你可以複製到記事本裡讓自己隨時可以拿出來幻想一下</p>
                     <p>最右方學測按鈕點開會出現學測<b>60級分制</b>分數的輸入框, <br>輸入後, 下方列表及複製的結果將改為顯示你在分科所需要的平均分數</p>
+                    <p>可以輸入頂大 / 四大 / 四中 / 師北海，且有些校系可以簡寫</p>
                     <p>你可能想知道: <span id="input-suggesion" class="link"></span></p>
                 </ul>`
 
