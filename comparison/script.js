@@ -143,7 +143,7 @@ function renderComparisonResults(results, append = false) {
         row.innerHTML = `
             <div class="card-main">
             
-                <form action="https://uac2.ncku.edu.tw/cross_search/index.php?c=search&m=detail" method="post">
+                <form target="_blank" action="https://uac2.ncku.edu.tw/cross_search/index.php?c=search&m=detail" method="post">
                     <button name="dep_id" value=${currentData.id} type="submit" class="jump-link to-uac-button" title="考分會原始資料">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
@@ -170,7 +170,7 @@ function renderComparisonResults(results, append = false) {
                 <div class="history-grid-wrapper">
                     <span class="h-year">去年</span>
                     ${historyHtml}
-                    <a href="../?school=${item.uni}&dept=${item.dept}" class="jump-link" title="查看詳細分析">
+                    <a target="_blank" href="../?school=${item.uni}&dept=${item.dept}" class="jump-link" title="查看詳細分析">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
                             <polyline points="15 3 21 3 21 9"></polyline>

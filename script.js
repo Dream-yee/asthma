@@ -270,7 +270,7 @@ function displayResults() {
         html += `
             <div class="current-criteria-box">
 
-                <h3 class="box-title">${currentYear} 年 學測標準及採計科目 <form action="https://uac2.ncku.edu.tw/cross_search/index.php?c=search&m=detail" method="post">
+                <h3 class="box-title">${currentYear} 年 學測標準及採計科目 <form target="_blank" action="https://uac2.ncku.edu.tw/cross_search/index.php?c=search&m=detail" method="post">
                     <button name="dep_id" value=${newStandards.id} type="submit" class="jump-link to-uac-button" title="考分會原始資料">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
