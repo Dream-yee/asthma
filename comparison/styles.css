@@ -588,6 +588,20 @@ body {
     .card-history-section {
         padding: 10px 25px;
     }
+
+    .history-block {
+        gap: 1px;
+    }
+
+    .h-admitted {
+        font-size: 9px;
+    }
+
+    .h-weights {
+        font-size: 10px;
+    }
+
+    
 }
 
 #you-cant-see-me {
