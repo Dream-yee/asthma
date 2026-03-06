@@ -218,7 +218,7 @@ function formatCurrentYearDetails(data) {
     if (data.科目倍數) {
         const weights = Object.entries(data.科目倍數)
             .map(([sub, w]) => `<span class="weight-pill">${sub} <span class="weight-strong">${w}</span></span>`)
-            .join(`<span class="data-separator">|</span>`);
+            .join(`<span class="data-separator"></span>`);
         html += `
             <div class="std-section">
                 <label>分科加權</label>
