@@ -45,7 +45,7 @@ https://www.ilovepdf.com/pdf_to_excel 用這個轉，超強
 
 5. 把最新一年的校系更名改成 CSV 丟到 /datas/最新民國年/dept_renamed.csv (檔名一定要改成這樣)
 
-6. 用 get_new_details.py 跑 /datas/最新民國年/AST_school.html 得到 department_eids.json 以及 all_department_criteria.json
+6. 用 get_new_criteria.py 跑 /datas/最新民國年/AST_school.html 得到 department_eids.json 以及 all_department_criteria.json
 
 7. 用 deparment_renaming.py 跑 /datas/最新民國年/dept_renamed.csv 得到 dept_renamed.json
 

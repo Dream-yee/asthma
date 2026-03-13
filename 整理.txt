@@ -1,0 +1,27 @@
+整理
+
+datas/新一年/AST_school.html - get_new_criteria.py
+*get_new_criteria.py 記得改年份
+=> department_eids.json & all_department_criteria.json
+
+/datas/民國年/subjects_combinations.csv - get_single_year_results
+/datas/民國年/dept_criteria.csv - get_single_year_results
+=> very_result_民國年.json
+
+/datas/最新民國年/dept_renamed.csv - deparment_renaming_parser.py
+=> dept_renamed.json
+
+run data_integrator.py
+
+datas/{YEAR}/subjects_combinations.csv - tool/score_distribution.py
+=> datas/{YEAR}/subjects_combinations.json
+
+What should be prepared
+ - datas/新一年/AST_school.html
+ - /datas/民國年/subjects_combinations.csv
+ - /datas/民國年/dept_criteria.csv
+ - /datas/最新民國年/dept_renamed.csv
+ - datas/{YEAR}/subjects_combinations.csv
+
+What will get
+ - 

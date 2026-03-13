@@ -7,8 +7,6 @@ from typing import Dict, Any, Tuple
 HTML_FILE = 'input_table.html'
 # 輸出 JSON 檔案路徑
 OUTPUT_JSON_FILE = 'extracted_dept_info.json'
-# 由於 HTML 片段中沒有學校名稱，我們根據您的要求假定一個
-# ASSUMED_UNIVERSITY = "國立成功大學" # 此處在全爬蟲時會被覆蓋，但在此單元測試中仍保留
 
 # 科目名稱簡寫對應 (與先前保持一致)
 SUBJECT_ABBR_MAP = {
