@@ -1,6 +1,13 @@
 /* ======================================================= */
 /* 0. 基礎設定與字體 (Modern Refined) */
 /* ======================================================= */
+:root {
+    --sage-primary: #76bfa2;
+    --sage-light: #eef7f4;
+    --sage-dark: #3d6b59;
+    --bg-gray: #f2f4f3;
+}
+
 body {
     font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif; /* 假設使用 Inter 或系統無襯線字體 */
     background-color: #FAFAFA; /* 柔和極淺米白 */
@@ -663,155 +670,6 @@ body.dark-mode .suggestion-item.active {
     background: rgba(255, 0, 0, 0.1);
     color: #ff4444;
 }
-/* ======================================================= */
-/* 12. GSAT Island 側邊懸浮設計 (Mobile Side-Docked) */
-/* ======================================================= */
-
-@media (max-width: 768px) {
-    #score-island-container {
-        /* 🌟 改為靠右側垂直置中 */
-        top: 45%;
-        right: 0px;
-        left: auto;
-        transform: translateY(-50%) scale(0.8);
-        width: auto;
-    }
-
-    #score-island-container.island-visible {
-        transform: translateY(-50%) scale(1);
-    }
-
-    .score-island {
-        flex-direction: column; /* 改為垂直排列 */
-        padding: 15px 10px;
-        border-radius: 40px 0 0 40px; /* 保持長膠囊感 */
-        gap: 12px;
-        width: 40px; /* 固定寬度，讓它看起來像側邊欄 */
-    }
-
-    .island-label {
-        /* writing-mode: vertical-lr; 🌟 讓文字垂直顯示，很有設計感 */
-        text-orientation: mixed;
-        font-size: 11px;
-        /* letter-spacing: 2px; */
-        margin-bottom: 5px;
-        color: #666;
-    }
-
-    .score-inputs-group {
-        flex-direction: column; /* 輸入框垂直排成一列 */
-        gap: 10px;
-    }
-
-    .input-unit input {
-        width: 42px; /* 稍微縮小一點以適應側邊 */
-        height: 42px;
-        border-radius: 50%;
-        font-size: 16px;
-        background: rgba(255,255,255,0.9);
-        padding: 0px; /* 怕你不知道, safari手機會默認文字有padding, 低能兒 */
-    }
-
-    /* 調整關閉按鈕，放在最下方 */
-    #island-close-btn {
-        margin-top: 5px;
-        width: 25px;
-        height: 25px;
-    }
-}
-
-/* ======================================================= */
-/* 11. 懸浮按鈕 (FAB) 樣式 */
-/* ======================================================= */
-
-#fab-container {
-    position: fixed;
-    bottom: 70px;
-    right: 0;
-    display: flex;
-    flex-direction: column; /* 垂直排列 */
-    gap: 15px; /* 按鈕間距 */
-    z-index: 500;
-}
-
-.fab-button {
-    width: 46px;
-    height: 46px;
-    border-radius: 50% 0 0 50%;
-    background-color: rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(10px); /* 磨砂玻璃感 */
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-.fab-icon {
-    font-size: 15px;
-    font-weight: bold;
-    color: #333;
-    transition: color 0.3s;
-}
-
-@media (min-width: 768px) {
-    /* 針對特定按鈕的顏色微調 (可選) */
-    #fab-gsat:hover {
-        background-color: #55A692; /* 成績按鈕主題色 */
-    }
-
-    #fab-spotlight:hover {
-        background-color: #55A692; /* 搜尋按鈕主題色 (或維持一致的綠色) */
-    }
-
-    #fab-container{
-        right: 30px;
-
-    }
-
-    .fab-button {
-        border-radius: 50%;
-        width: 56px;
-        height: 56px;
-    }
-    .fab-icon {
-        font-size: 20px;
-    }
-
-    .fab-button:hover {
-        transform: scale(1.1) translateY(-5px);
-        background-color: #4CAF50; /* 懸停時變綠色 */
-        box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
-    }
-
-    .fab-button:hover .fab-icon {
-        color: #ffffff; /* 懸停時圖標變白 */
-    }
-}
-
-/* --- 黑夜模式 --- */
-body.dark-mode .fab-button {
-    background-color: rgba(45, 45, 45, 0.8);
-    border-color: rgba(255, 255, 255, 0.1);
-}
-
-body.dark-mode .fab-icon {
-    color: #eee;
-}
-
-/* 黑夜模式 */
-body.dark-mode .score-island {
-    background-color: rgba(30, 30, 30, 0.8);
-    border-color: rgba(255, 255, 255, 0.1);
-}
-body.dark-mode .island-label { color: #eee; }
-body.dark-mode .input-unit input {
-    background: rgba(255,255,255,0.1);
-    color: #fff;
-    border-color: rgba(255,255,255,0.1);
-}
 
 /* ======================================================= */
 /* 14. 左撇子模式鏡像邏輯 */
@@ -834,7 +692,7 @@ body.dark-mode .input-unit input {
 
 #left-hand-trigger:hover {
     width: 40px; /* 游標靠近時稍微變寬，暗示可以點擊 */
-}
+} /* 這他媽的到底有什麼用 我的手指看起來像游標嗎 */
 
 .trigger-indicator {
     width: 10px;
@@ -846,20 +704,22 @@ body.dark-mode .input-unit input {
 /* --- 核心：左撇子模式下的元件位移 --- */
 
 /* 1. 懸浮按鈕 (FAB) 移到左邊 */
-.left-handed #fab-container {
+.left-handed .island-trigger {
     right: auto;
     left: 0px;
+    border-radius: 0 12px 12px 0;
 }
 
 /* 2. GSAT Island 移到左邊 */
-.left-handed #score-island-container {
+.left-handed #gsat-island{
     right: auto;
-    left: 0px;
-    transform: translateY(-50%) scale(0.8);
+    left: -100px;
+    border-radius: 0px 20px 20px 0px;
+    box-shadow: 4px 0px 15px rgba(0, 0, 0, 0.15);
 }
 
-.left-handed #score-island-container.island-visible {
-    transform: translateY(-50%) scale(1);
+.left-handed #gsat-island.active {
+    transform: translateX(100px);
 }
 
 /* 3. 修改手機版收納 (Tucked) 方向 */
@@ -919,4 +779,201 @@ body.dark-mode .input-unit input {
     background-color: #c6c6c636; /* 淺色底 */
     color: #52a894; /* 深色圖示 */
     transform: scale(1.1);
+}
+
+
+/* --- GSAT island from Ross --- */
+/* 側邊觸發標籤 */
+.island-trigger {
+    position: fixed;
+    top: 80%;
+    right: 0;
+    width: 40px;
+    background-color: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px); /* 磨砂玻璃感 */
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    padding: 10px 5px;
+    font-size: 15px;
+    border-radius: 12px 0 0 12px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    font-weight: bold;
+    align-items: center;
+    color: black;
+}
+
+.spotlight-trigger {
+    top: 86%;
+}
+
+.trigger-icon { font-size: 18px; writing-mode: horizontal-tb; }
+/* --- 極窄智慧島 --- */
+.gsat-island {
+    position: fixed;
+    right: -100px; /* 初始隱藏位置 */
+    top: 25%;
+    width: 60px;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--sage-light);
+    border-radius: 20px 0 0 20px;
+    box-shadow: -5px 0 20px rgba(0,0,0,0.05);
+    z-index: 1001;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 20px 0;
+}
+
+.gsat-island.active {
+    transform: translateX(-100px);
+}
+
+/* 輸入框清單 */
+.score-minimal-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+/* 輸入框樣式 */
+.score-input {
+    width: 70%;
+    padding: 10px 5px;
+    border: none;
+    border-bottom: 2px solid var(--sage-light);
+    background: transparent;
+    text-align: center;
+    font-size: 16px;
+    font-weight: bold;
+    color: var(--sage-dark);
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+.score-input:focus {
+    border-bottom-color: var(--sage-primary);
+}
+
+/* 針對 Placeholder 的樣式 */
+.score-input::placeholder {
+    font-size: 12px;
+    color: #ccc;
+    font-weight: normal;
+}
+
+/* 隱藏數字箭頭 */
+.score-input::-webkit-outer-spin-button,
+.score-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* 自動存檔小圓點 */
+.status-dot {
+    width: 6px;
+    height: 6px;
+    background: var(--sage-primary);
+    border-radius: 50%;
+    margin: 15px auto 0;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.mode-toggle-btn {
+    width: 80%;
+    margin: 0 auto 15px auto;
+    display: block;
+    padding: 8px;
+    background: var(--sage-light, #e8f3ee);
+    color: var(--sage-dark, #3d6b59);
+    border: 1px solid var(--sage-primary, #76bfa2);
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.mode-toggle-btn:hover {
+    background: var(--sage-primary, #76bfa2);
+    color: white;
+}
+
+/* 讓容器維持原本的垂直排列 */
+.score-minimal-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+/* --- Desktop 響應式優化 --- */
+@media (min-width: 1024px) {
+    
+    /* 1. 整體佈局改為雙欄 */
+    .app-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr; /* 左邊搜尋，右邊清單 */
+        gap: 30px;
+        max-width: 1200px;
+        margin: 0 5vh;
+        padding: 20px 20px;
+        height: 90vh;
+    }
+
+    /* 2. 讓右側清單固定（Sticky），滾動左邊時右邊不動 */
+    #selected-section {
+        position: sticky;
+        top: 20px;
+        height: calc(100vh - 100px);
+        overflow-y: auto;
+        background: #fdfdfd;
+        border-radius: 24px;
+        padding: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    }
+
+    /* 3. 已選卡片在寬螢幕下稍微縮減 padding */
+    .dept-item.selected {
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .dept-item.selected:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    }
+
+
+    /* 5. 搜尋結果改為 Grid 網格佈局，增加效率 */
+    #search-results {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 15px;
+    }
+
+    .info-list p {
+        font-size: 18px;
+    }
+
+    .dept-comparison {
+        font-size: 15px;
+    }
+
+    .delete-btn:hover {
+        color: #e74c3c;
+    }
+
+    .suggestion-section .dept-item:hover  {
+        background: var(--sage-light);
+        color: var(--sage-dark);
+    }
+}
+
+/* 針對超大螢幕 (如 2K 螢幕) 的寬度限制 */
+@media (min-width: 1600px) {
+    .app-container {
+        max-width: 1400px;
+    }
 }

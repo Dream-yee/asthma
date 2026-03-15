@@ -266,7 +266,7 @@ function renderSelected(adding = false) {
                             Object.entries(d115["術科"]).forEach(([pe_sub, pe_weight]) => { // sry this actually should use the last year data but it's kinda complicated
                                 pe_score += gsatMapping[stupidAlias[pe_sub] !== undefined ? stupidAlias[pe_sub] : pe_sub] * pe_weight;
                             })
-                        else pe_score = gsatMapping["體育"]
+                        else pe_score = gsatMapping["體育"] * 100;
                         if(pe_score > 0) {
                             pe_score /= 100;
                             goal -= pe_score * weight;

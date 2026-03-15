@@ -2,10 +2,19 @@
 let schoolData = {};
 let regionData = {};
 let searchEngine;
+let gsatMapping = {}
 const universitySelect = document.getElementById('university-select');
 const departmentSelect = document.getElementById('department-select');
 const resultsDisplay = document.getElementById('results-display');
 const resultsDiv = document.querySelector('.results');
+
+const stupidAlias = {
+    "創意表現": "創意",
+    "美術鑑賞": "鑑賞",
+    "彩繪技法": "彩繪",
+    "水墨書畫": "水墨"
+}
+
 
 // -----------------------------------------------------
 // 1. 資料載入與初始化
@@ -246,6 +255,8 @@ function displayResults() {
     const currentYear = allYears[0]; // 假設是 '115'
 
     // --- 2. 渲染最新年度 (Current Year: 115) 的數據 ---
+
+    let pe_score = 0.0, pe_weight = 0; // 幾年後記得填這個坑
     
     if (data[currentYear]) {
         const newStandards = data[currentYear];
@@ -266,13 +277,33 @@ function displayResults() {
             }).join('<span class="data-separator">|</span>');
 
         let practicalExamTags = null;
-
+        
+        let requiredWeight = 0, inputedWeight = 0;
         if(newStandards["術科"] !== undefined) {
             practicalExamTags = Object.entries(newStandards["術科"])
             .map(([subject, multiplier]) => {
                 const formattedMultiplier = (parseFloat(multiplier) || 0);
+                let inputed = gsatMapping[stupidAlias[subject] !== undefined ? stupidAlias[subject] : subject];
+                pe_score += inputed * multiplier;
+                if(inputed) inputedWeight += multiplier;
+                requiredWeight += multiplier;
                 return `<span class="data-tag multiplier-tag">${subject} <b>${formattedMultiplier}%</b></span>`;
             }).join('<span class="data-separator">|</span>');
+        }
+
+        pe_score /= 100;
+        if(requiredWeight !== inputedWeight)
+            pe_score = 0;
+        
+        if(multipliers["體育"] !== undefined){
+            pe_score = gsatMapping["體育"] * multipliers["體育"];
+            pe_weight = multipliers["體育"];
+        } else if (multipliers["音樂"] !== undefined){
+            pe_score *= multipliers["音樂"]
+            pe_weight = multipliers["音樂"]
+        } else if (multipliers["美術"] !== undefined){
+            pe_score *= multipliers["美術"]
+            pe_weight = multipliers["美術"]
         }
         
         const spots = newStandards["核定人數"];
@@ -300,10 +331,6 @@ function displayResults() {
             </div> 
         `;
     }
-
-    // 學測分數
-    let GSATScores = getGSATScore();
-
     // --- 3. 渲染歷史年份 (Historical Years) 的數據 ---
     
     const historicalYears = allYears.slice(1); // 排除最新年
@@ -336,13 +363,19 @@ function displayResults() {
                 // console.log(GSAT_modifier); 
                 
                 let times_left = Object.values(criteria).reduce((a, b) => a+b, 0);
-                for(const [k, v] of Object.entries(GSATScores)) {
+                for(const [k, v] of Object.entries(gsatMapping)) {
                     if(criteria[k] !== undefined) {
-                        GSAT_modifier -= criteria[k] * (v === "" ? 0 : v);
+                        GSAT_modifier -= criteria[k] * (v === undefined ? 0 : v);                        
                         times_left -= criteria[k];
                     }
                 }
+                if(pe_score !== 0) {
+                    GSAT_modifier -= pe_score;
+                    times_left -= pe_weight; // 虧你英文15級, 想這什麼爛變數名字
+                }
+                // 寫這個的人滿聰明的吧, 阿另一邊在寫什麼雞巴
                 let htmlPersonalData = "";
+                
                 let GSAT_modifier_ave = Number.parseFloat(GSAT_modifier / times_left).toFixed(2);
                 if(GSAT_modifier !== record["一般考生錄取標準總分"]) {
                     htmlPersonalData = `
@@ -528,56 +561,94 @@ if (GSATInputButton) {
     });
 }
 
-const scoreIsland = document.getElementById('score-island-container');
-const scoreInputs = document.querySelectorAll('.input-unit input');
-
-// 1. 切換顯示/隱藏
-function toggleScoreIsland() {
-    scoreIsland.classList.toggle('island-visible');
-    if (scoreIsland.classList.contains('island-visible')) {
-        // auto focus after turn on the island.
-        // set timeout is necessary, stupid js.
-        setTimeout(() => document.getElementById("score-chi").focus(), 100);
-    }
+// 切換開關
+function toggleGsatIsland() {
+    document.getElementById('gsat-island').classList.toggle('active');
+    let text = document.getElementById('trigger-text');
+    text.textContent = text.textContent === "學測" ? "收回" : "學測"
 }
 
-// 2. 自動跳轉邏輯
-scoreInputs.forEach((input, index) => {
+// 1. 定義模式與科目 (科目名稱參考自大考中心資料 [cite: 11, 23, 36])
+const MODES = [
+    { name: "一般", subjects: ["國文", "英文", "數A", "數B", "自然", "社會"], key: "academic" },
+    { name: "音樂", subjects: ["主修", "副修", "樂理", "視唱", "聽寫"], key: "music" },
+    { name: "美術", subjects: ["素描", "創意", "彩繪", "鑑賞", "水墨"], key: "art" },
+    { name: "體育", subjects: ["體育"], key: "sport" }
+];
 
-    input.addEventListener('focus', (e) => {
-        // 🌟 確保輸入框在手機鍵盤彈出時不會被遮擋
-        if (window.innerWidth < 768) {
-            e.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-    });
+let currentModeIndex = 0;
 
-    input.addEventListener('input', (e) => {
-        const value = e.target.value;
+// 2. 切換模式函數
+function cycleMode() {
+    currentModeIndex = (currentModeIndex + 1) % MODES.length;
+    renderInputs();
+    
+    // 更新按鈕文字
+    document.getElementById('mode-toggle-btn').innerText = `${MODES[currentModeIndex].name}`;
+}
 
-        // 如果輸入超過 60 (級分上限)，自動修正為 60
-        if (parseInt(value) > 60) {
-            e.target.value = "60";
-        }
+// 3. 動態渲染輸入框
+function renderInputs() {
+    const container = document.getElementById('score-inputs-container');
+    const mode = MODES[currentModeIndex];
+    
+    container.innerHTML = mode.subjects.map((sub, i) => {
+        const nextSub = mode.subjects[i + 1] ? `input-${mode.key}-${i + 1}` : '';
+        return `
+            <input type="number" 
+                   class="score-input" 
+                   id="input-${mode.key}-${i}" 
+                   data-sub="${sub}"
+                   data-next="${nextSub}"
+                   data-previous="input-${mode.key}-${i - 1}"
+                   placeholder="${sub}" 
+                   value="${gsatMapping[sub] || ''}"
+                   min="0" max="100">
+        `;
+    }).join('');
 
-        // 🌟 自動跳轉：如果輸入兩位數，或者輸入的是 7-9 之間的個位數 (因為級分不超過 60)
-        if (value.length >= 2 || (parseInt(value) >= 7 && parseInt(value) <= 9)) {
-            if (index < scoreInputs.length - 1) {
-                scoreInputs[index + 1].focus();
+    // 重新綁定事件監聽
+    bindInputEvents();
+}
+
+function bindInputEvents() {
+    const inputs = document.querySelectorAll('.score-input');
+    // 1. 自動儲存與自動跳轉
+    inputs.forEach(input => {
+        input.addEventListener('input', (e) => {
+            const val = e.target.value;
+            const nextId = e.target.getAttribute('data-next');
+
+            // 自動跳轉邏輯：如果輸入了兩位數，或是輸入的數字 > 6 (既然最高60)
+            if ((parseInt(val) > 10 && val.length === 2 && val.length == 2 && currentModeIndex !== 0) || (val.length >= 2 && (currentModeIndex === 0 || val.length === 3)) || (currentModeIndex === 0 && parseInt(val) > 6 && val.length === 1)) {
+                if (currentModeIndex === 0 && parseInt(val) > 60) {
+                    e.target.value = 60;
+                } else if (currentModeIndex !== 0 && parseInt(val) > 100) {
+                    e.target.value = 100;
+                }
+                if (nextId) {
+                    const nextEl = document.getElementById(nextId);
+                    if (nextEl) nextEl.focus();
+                }
             }
-        }
-        displayResults();
-    });
-
-    // 支援 Backspace 刪除後跳回前一格
-    input.addEventListener('keydown', (e) => {
-        if (e.key === 'Backspace' && e.target.value === '') {
-            if (index > 0) {
-                scoreInputs[index - 1].focus();
-            }
+            gsatMapping[input.getAttribute('data-sub')] = e.target.value;
             displayResults();
-        }
+        })
+
+        // 支援 Backspace 刪除後跳回前一格
+        input.addEventListener('keydown', (e) => {
+            const previousId = e.target.getAttribute('data-previous');
+            if (e.key === 'Backspace' && e.target.value === '') {
+                if (previousId) {
+                    document.getElementById(previousId).focus()
+                }
+                gsatMapping[input.getAttribute('data-sub')] = undefined;
+                displayResults();
+            }
+        });
     });
-});
+
+}
 
 // 3. 鍵盤 G 觸發
 document.addEventListener('keydown', (e) => {
@@ -593,22 +664,6 @@ document.addEventListener('keydown', (e) => {
         scoreIsland.classList.remove('island-visible');
     }
 });
-
-// 關閉按鈕
-document.getElementById('island-close-btn').addEventListener('click', () => {
-    scoreIsland.classList.remove('island-visible');
-});
-
-function getGSATScore() {
-    return {
-        "國文": scoreInputs[0].value,
-        "英文": scoreInputs[1].value,
-        "數A": scoreInputs[2].value,
-        "數B": scoreInputs[3].value,
-        "自然": scoreInputs[4].value,
-        "社會": scoreInputs[5].value,
-    }
-}
 
 const leftTrigger = document.getElementById('left-hand-trigger');
 
@@ -661,6 +716,10 @@ if (fabGsat) {
         toggleScoreIsland(); // 執行之前定義好的切換函數
     });
 }
+
+window.addEventListener('DOMContentLoaded', () => {
+    renderInputs();
+});
 
 // 啟動應用程式
 // 確保 DOM 元素存在後才執行 loadData

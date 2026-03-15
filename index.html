@@ -17,32 +17,6 @@
     </script>
 </head>
 <body>
-    <div id="score-island-container" class="island-hidden">
-        <div class="score-island">
-            <div class="island-label"><p>學測成績</p><p>(60級分)</p></div>
-            <div class="score-inputs-group">
-                <div class="input-unit">
-                    <input type="number" id="score-chi" placeholder="國" maxlength="2">
-                </div>
-                <div class="input-unit">
-                    <input type="number" id="score-eng" placeholder="英" maxlength="2">
-                </div>
-                <div class="input-unit">
-                    <input type="number" id="score-mathA" placeholder="數A" maxlength="2">
-                </div>
-                <div class="input-unit">
-                    <input type="number" id="score-mathB" placeholder="數B" maxlength="2">
-                </div>
-                <div class="input-unit">
-                    <input type="number" id="score-sci" placeholder="自" maxlength="2">
-                </div>
-                <div class="input-unit">
-                    <input type="number" id="score-soc" placeholder="社" maxlength="2">
-                </div>
-            </div>
-            <button id="island-close-btn">✕</button>
-        </div>
-    </div>
     <div class="container">
         <header class="header">
             <h1>分科測驗校系標準及分數</h1>
@@ -80,13 +54,20 @@
         </div>
     </div>
 
-    <div id="fab-container">
-        <button id="fab-gsat" class="fab-button" title="輸入學測成績 (G)">
-            <span class="fab-icon">學測</span>
-        </button>
-        <button id="fab-spotlight" class="fab-button" title="快速搜尋 (F)">
-            <span class="fab-icon">搜尋</span>
-        </button>
+    <div id="triggers">
+        <div class="island-trigger" onclick="toggleGsatIsland()">
+            <span id="trigger-text" class="trigger-text">學測</span>
+        </div>
+        <div id="gsat-island" class="gsat-island">
+            <div class="island-content">
+                <button id="mode-toggle-btn" class="mode-toggle-btn" onclick="cycleMode()">一般</button>
+                <div id="score-inputs-container" class="score-minimal-list">
+                </div>
+            </div>
+        </div>
+        <div class="island-trigger spotlight-trigger" onclick="openSpotlight()">
+            <span id="trigger-text" class="trigger-text">搜尋</span>
+        </div>
     </div>
 
     <div id="left-hand-trigger" title="切換左撇子模式">
