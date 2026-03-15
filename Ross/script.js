@@ -234,7 +234,7 @@ function renderSelected(adding = false) {
         const scoreUrl = `https://dream-yee.github.io/asthma/?school=${item.uni}&dept=${item.dept}`;
 
         let historyScoreText = "";
-
+        if (copypasta[item.uni] === undefined) copypasta[item.uni] = {};
         if (deptData[CURRENT_YEAR - 1 + ""] !== undefined) {
             let pastaCache = [];
             for (const d114 of deptData[CURRENT_YEAR - 1 + ""]) {
@@ -249,7 +249,6 @@ function renderSelected(adding = false) {
 
                 // --- 分科需均計算邏輯 ---
                 let scoreDisplay = "無資料";
-                if (copypasta[item.uni] === undefined) copypasta[item.uni] = {};
 
                 const weights = d114.科目倍數;
                 let goal = d114.一般考生錄取標準總分;
@@ -312,6 +311,9 @@ function renderSelected(adding = false) {
             }
             copypasta[item.uni][item.dept] = pastaCache.join('\n');
         }
+
+        if(copypasta[item.uni][item.dept] === undefined) 
+            copypasta[item.uni][item.dept] = `${item.dept} ${w115Str4Copy}`;
 
         document.getElementById(`dept_${d115.id}`)?.setAttribute('onclick', `removeDept(${index}, '${d115.id}')`)
 
