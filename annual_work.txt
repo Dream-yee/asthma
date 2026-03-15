@@ -55,3 +55,6 @@ https://www.ilovepdf.com/pdf_to_excel 用這個轉，超強
 好啦我之後會改 這麼多步驟麻煩我自己幹嘛
 
 9. 考分會的分科簡章裡面有術科採計資料, 餵給Gemini得到json檔案, 放倒 /datas/年/practical_exam.json
+
+10. 單科資料要記得用, 他在https://www.ceec.edu.tw/xmdoc/cont?xsmsid=0J018611000723433352&sid=0P209410125264878260
+要把東西改到像data/114/single_subject_pplcnt.csv這樣, 然後跑 .py

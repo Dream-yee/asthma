@@ -1,5 +1,5 @@
 from tools.college_data_transform import convert_division_exam_data
-from tools.score_distribution_csv_2_json import convert_score_distribution
+from tools.score_distribution_csv_2_json import convert_score_distribution, single_subject
 from tools.match_groups import match_them
 import json
 
@@ -8,7 +8,7 @@ YEAR = 114
 def main():
     dept_cri = convert_division_exam_data(f"datas/{YEAR}/dept_criteria.csv")
 
-    sub_comb = convert_score_distribution(f"datas/{YEAR}/subjects_combinations.csv")
+    sub_comb = single_subject(f"datas/{YEAR}/single_subject_pplcnt.csv") | convert_score_distribution(f"datas/{YEAR}/subjects_combinations.csv")
 
     result = match_them(dept_cri, sub_comb)
 

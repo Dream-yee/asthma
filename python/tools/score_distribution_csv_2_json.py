@@ -1,6 +1,7 @@
 import csv
 import json
 from collections import defaultdict
+import pandas as pd
 import re
 
 def convert_score_distribution(csv_filepath):
@@ -122,16 +123,46 @@ def convert_score_distribution(csv_filepath):
 
 def i_need_output(ip, op):
     with open(op, 'w', encoding='utf-8') as f:
-        json.dump(convert_score_distribution(ip), f, ensure_ascii=False, indent=4)
+        a = convert_score_distribution(ip)
+        b = single_subject(INPUT_CSV_SINGLE)
+        result = a | b # what the actual fuck python
+        json.dump(result, f, ensure_ascii=False, indent=4)
+
+def single_subject(csv_file):
+    # 1. 讀取 CSV
+    df = pd.read_csv(csv_file, encoding='utf-8')
+
+    result = {}
+
+    # 2. 獲取所有科目名稱（排除 '級分' 這一欄）
+    subjects = [col for col in df.columns if col != '級分']
+    i = 999
+    # 3. 進行資料轉換
+    for sub in subjects:
+        # 將該科目的資料轉成 級分:百分比 的字典
+        # 這裡將級分轉為整數再轉字串，確保 JSON 的 Key 是 "60", "59" 格式
+        sub_data = {}
+        for _, row in df.iterrows():
+            score_key = str(int(row['級分']))
+            percentage_val = float(row[sub])
+            sub_data[score_key] = percentage_val
+        
+        result[str(i)] = {}
+        result[str(i)]["科目組合"] = [sub]
+        result[str(i)]["累積百分比"] = sub_data
+        i -= 1
+
+    return result
 
 
 # =======================================================
 # 執行腳本
 # =======================================================
 
-YEAR = 112
+YEAR = 114
 
 INPUT_CSV = f'datas/{YEAR}/subjects_combinations.csv' # 改檔名的地方
+INPUT_CSV_SINGLE = f'datas/{YEAR}/single_subject_pplcnt.csv'
 OUTPUT_JSON = f'datas/{YEAR}/subjects_combinations.json'
 
 i_need_output(INPUT_CSV, OUTPUT_JSON)
