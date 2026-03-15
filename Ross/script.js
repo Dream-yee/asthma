@@ -21,6 +21,14 @@ let gsatInputed = false;
 
 let copypasta = {};
 
+let gsatMapping = {}
+const stupidAlias = {
+    "創意表現": "創意",
+    "美術鑑賞": "鑑賞",
+    "彩繪技法": "彩繪",
+    "水墨書畫": "水墨"
+}
+
 const GUESSING = [
     "物理治療 職能治療 語言治療",
     "醫學系 牙醫 獸醫",
@@ -211,14 +219,6 @@ function renderSelected(adding = false) {
     gsatInputed = false;
 
     // 定義學測科目對應 key (這要跟你的 schoolData 內的 key 匹配)
-    const gsatMapping = {
-        "國文": scoreInputs[0].value,
-        "英文": scoreInputs[1].value,
-        "數A": scoreInputs[2].value,
-        "數B": scoreInputs[3].value,
-        "自然": scoreInputs[4].value,
-        "社會": scoreInputs[5].value,
-    }
 
     selectedList.innerHTML = selectedDepts.map((item, index) => {
         const deptData = schoolData[item.uni][item.dept];
@@ -260,7 +260,19 @@ function renderSelected(adding = false) {
                 let weightsSum = 0;
 
                 Object.entries(weights).forEach(([sub, weight]) => {
-                    if (gsatMapping[sub] === undefined) {
+                    if(sub === "術科") {
+                        let pe_score = 0.0;
+                        if(d115["術科"] !== undefined)
+                            Object.entries(d115["術科"]).forEach(([pe_sub, pe_weight]) => { // sry this actually should use the last year data but it's kinda complicated
+                                pe_score += gsatMapping[stupidAlias[pe_sub] !== undefined ? stupidAlias[pe_sub] : pe_sub] * pe_weight;
+                            })
+                        else pe_score = gsatMapping["體育"]
+                        if(pe_score > 0) {
+                            pe_score /= 100;
+                            goal -= pe_score * weight;
+                            userGsatWeightedSum += weight;
+                        }
+                    } else if (gsatMapping[sub] === undefined) {
                         subtestWeightsSum += weight;
                         astSubjects++;
                     } else if (gsatMapping[sub] !== "") {
@@ -402,15 +414,6 @@ copyBtn.addEventListener('click', () => {
     let text = '';
 
     if (gsatInputed) {
-        const gsatMapping = {
-            "國文": scoreInputs[0].value,
-            "英文": scoreInputs[1].value,
-            "數A": scoreInputs[2].value,
-            "數B": scoreInputs[3].value,
-            "自然": scoreInputs[4].value,
-            "社會": scoreInputs[5].value,
-        }
-
         text = "你所複製的是以";
         for(const entry of Object.entries(gsatMapping)) {
             if(entry[1] !== "")
@@ -460,38 +463,103 @@ function toggleGsatIsland() {
     text.textContent = text.textContent === "學測" ? "收回" : "學測"
 }
 
-// 初始化監聽器
-document.querySelectorAll('.score-input').forEach(input => {
+// 1. 定義模式與科目 (科目名稱參考自大考中心資料 [cite: 11, 23, 36])
+const MODES = [
+    { name: "一般", subjects: ["國文", "英文", "數A", "數B", "自然", "社會"], key: "academic" },
+    { name: "音樂", subjects: ["主修", "副修", "樂理", "視唱", "聽寫"], key: "music" },
+    { name: "美術", subjects: ["素描", "創意", "彩繪", "鑑賞", "水墨"], key: "art" },
+    { name: "體育", subjects: ["體育"], key: "sport" }
+];
+
+let currentModeIndex = 0;
+
+// 2. 切換模式函數
+function cycleMode() {
+    currentModeIndex = (currentModeIndex + 1) % MODES.length;
+    renderInputs();
+    
+    // 更新按鈕文字
+    document.getElementById('mode-toggle-btn').innerText = `${MODES[currentModeIndex].name}`;
+}
+
+// 3. 動態渲染輸入框
+function renderInputs() {
+    const container = document.getElementById('score-inputs-container');
+    const mode = MODES[currentModeIndex];
+    
+    container.innerHTML = mode.subjects.map((sub, i) => {
+        const nextSub = mode.subjects[i + 1] ? `input-${mode.key}-${i + 1}` : '';
+        return `
+            <input type="number" 
+                   class="score-input" 
+                   id="input-${mode.key}-${i}" 
+                   data-sub="${sub}"
+                   data-next="${nextSub}"
+                   data-previous="input-${mode.key}-${i - 1}"
+                   placeholder="${sub}" 
+                   value="${gsatMapping[sub] || ''}"
+                   min="0" max="100">
+        `;
+    }).join('');
+
+    // 重新綁定事件監聽
+    bindInputEvents();
+}
+
+function bindInputEvents() {
+    const inputs = document.querySelectorAll('.score-input');
     // 1. 自動儲存與自動跳轉
-    input.addEventListener('input', (e) => {
-        const val = e.target.value;
-        const nextId = e.target.getAttribute('data-next');
+    inputs.forEach(input => {
+        input.addEventListener('input', (e) => {
+            const val = e.target.value;
+            const nextId = e.target.getAttribute('data-next');
 
-        // 自動跳轉邏輯：如果輸入了兩位數，或是輸入的數字 > 6 (既然最高60)
-        if (val.length >= 2 || (parseInt(val) > 6 && val.length === 1)) {
-            if (parseInt(val) > 60) {
-                e.target.value = 60;
+            // 自動跳轉邏輯：如果輸入了兩位數，或是輸入的數字 > 6 (既然最高60)
+            if ((parseInt(val) > 10 && val.length === 2 && val.length == 2 && currentModeIndex !== 0) || (val.length >= 2 && (currentModeIndex === 0 || val.length === 3)) || (currentModeIndex === 0 && parseInt(val) > 6 && val.length === 1)) {
+                if (currentModeIndex === 0 && parseInt(val) > 60) {
+                    e.target.value = 60;
+                } else if (currentModeIndex !== 0 && parseInt(val) > 100) {
+                    e.target.value = 100;
+                }
+                if (nextId) {
+                    const nextEl = document.getElementById(nextId);
+                    if (nextEl) nextEl.focus();
+                }
             }
-            if (nextId) {
-                const nextEl = document.getElementById(nextId);
-                if (nextEl) nextEl.focus();
-            }
-        }
 
-        renderSelected();
-
-    });
-
-    // 支援 Backspace 刪除後跳回前一格
-    input.addEventListener('keydown', (e) => {
-        const previousId = e.target.getAttribute('data-previous');
-        if (e.key === 'Backspace' && e.target.value === '') {
-            if (previousId) {
-                document.getElementById(previousId).focus()
-            }
             renderSelected();
-        }
+            gsatMapping[input.getAttribute('data-sub')] = e.target.value;
+        })
+
+        // 支援 Backspace 刪除後跳回前一格
+        input.addEventListener('keydown', (e) => {
+            const previousId = e.target.getAttribute('data-previous');
+            if (e.key === 'Backspace' && e.target.value === '') {
+                if (previousId) {
+                    document.getElementById(previousId).focus()
+                }
+                renderSelected();
+            }
+        });
     });
+
+}
+
+// 5. 儲存當前模式的成績
+function saveCurrentModeScores() {
+    const mode = MODES[currentModeIndex];
+    const inputs = document.querySelectorAll('.score-input');
+    let scores = {};
+    
+    inputs.forEach(input => {
+        scores[input.getAttribute('data-sub')] = input.value;
+    });
+    
+}
+
+// 頁面載入時初始化
+window.addEventListener('DOMContentLoaded', () => {
+    renderInputs();
 });
 
 document.addEventListener('DOMContentLoaded', loadData);

@@ -53,3 +53,5 @@ https://www.ilovepdf.com/pdf_to_excel 用這個轉，超強
 
 8. tools 裡面的 score_distribution 記得跑一下
 好啦我之後會改 這麼多步驟麻煩我自己幹嘛
+
+9. 考分會的分科簡章裡面有術科採計資料, 餵給Gemini得到json檔案, 放倒 /datas/年/practical_exam.json

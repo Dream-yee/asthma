@@ -264,6 +264,16 @@ function displayResults() {
                 const formattedMultiplier = (parseFloat(multiplier) || 0);
                 return `<span class="data-tag multiplier-tag">${subject} <b>${formattedMultiplier}</b></span>`;
             }).join('<span class="data-separator">|</span>');
+
+        let practicalExamTags = null;
+
+        if(newStandards["術科"] !== undefined) {
+            practicalExamTags = Object.entries(newStandards["術科"])
+            .map(([subject, multiplier]) => {
+                const formattedMultiplier = (parseFloat(multiplier) || 0);
+                return `<span class="data-tag multiplier-tag">${subject} <b>${formattedMultiplier}%</b></span>`;
+            }).join('<span class="data-separator">|</span>');
+        }
         
         const spots = newStandards["核定人數"];
 
@@ -284,8 +294,10 @@ function displayResults() {
 
                 <h5>${gsatTags || '<span class="data-tag">無學測檢定</span>'}</h5>
 
-                <h5>${multiplierTags || '<span class="data-tag">該學系今年沒有參與考試分發。</h5>'}</div> 
-            </div>
+                <h5>${multiplierTags || '<span class="data-tag">該學系今年沒有參與考試分發。</h5>'}
+                ${practicalExamTags !== null ? `<h5>${practicalExamTags}</h5>`: ''}
+
+            </div> 
         `;
     }
 

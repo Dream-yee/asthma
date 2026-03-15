@@ -226,6 +226,17 @@ function formatCurrentYearDetails(data) {
             </div>`;
     }
 
+    if(data.術科) {
+        const weights = Object.entries(data.術科)
+            .map(([sub, w]) => `<span class="weight-pill">${sub} <span class="weight-strong">${w}%</span></span>`)
+            .join(`<span class="data-separator"></span>`);
+        html += `
+            <div class="std-section">
+                <label>術科採計</label>
+                <div class="pills-wrapper">${weights}</div>
+            </div>`;
+    }
+ 
     return html;
 }
 

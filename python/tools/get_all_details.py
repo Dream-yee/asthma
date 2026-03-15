@@ -7,12 +7,18 @@ from tools.extract_department_details import extract_table_data
 # --- 設定常數 ---
 POST_URL = 'https://uac2.ncku.edu.tw/cross_search/index.php?c=search&m=detail'
 
-def get_department_html_responses(eids_data) -> List[Tuple[str, str, str, str]]:
+def get_department_html_responses(eids_data, year) -> List[Tuple[str, str, str, str]]:
     """
     遍歷所有 EID，發送 POST 請求，並返回包含所有 HTML 響應的列表。
     
     返回: [ (學校名稱, 科系名稱, EID, HTML內容), ... ]
     """
+
+    # 術科資料
+    with open(f"datas/{year}/practical_exam.json", 'r', encoding='utf-8') as f:
+        practical_exam = json.load(f)
+
+
     # 展開 EID 列表，以 university/department 為單位
     eids_list = []
     for uni, depts in eids_data.items():
@@ -52,6 +58,10 @@ def get_department_html_responses(eids_data) -> List[Tuple[str, str, str, str]]:
             html_content = response.text
             result[expected_uni][expected_dept] = extract_table_data(html_content, expected_uni, expected_dept)
             result[expected_uni][expected_dept]["id"] = eid
+            if result[expected_uni][expected_dept]["科目倍數"].get("音樂") != None:
+                result[expected_uni][expected_dept]["術科"] = practical_exam["音樂"][expected_uni][expected_dept]
+            if result[expected_uni][expected_dept]["科目倍數"].get("美術") != None:
+                result[expected_uni][expected_dept]["術科"] = practical_exam["美術"][expected_uni][expected_dept]
 
             print(f"進度：({index + 1}/{total_eids}) 成功獲取 EID {eid} ({expected_uni} - {expected_dept}) ")
             

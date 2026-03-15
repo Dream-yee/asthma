@@ -4,7 +4,7 @@ import json
 
 YEAR = 115
 
-result = get_department_html_responses(extract_department_eids(f"datas/{YEAR}/AST_school.html"))
+result = get_department_html_responses(extract_department_eids(f"datas/{YEAR}/AST_school.html"), YEAR)
 
 with open(f"datas/{YEAR}/all_department_criteria.json", 'w', encoding='utf-8') as f:
     json.dump(result, f, ensure_ascii=False, indent=4)

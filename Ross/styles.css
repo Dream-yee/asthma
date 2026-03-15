@@ -361,6 +361,34 @@ body {
     transition: opacity 0.3s;
 }
 
+.mode-toggle-btn {
+    width: 80%;
+    margin: 0 auto 15px auto;
+    display: block;
+    padding: 8px;
+    background: var(--sage-light, #e8f3ee);
+    color: var(--sage-dark, #3d6b59);
+    border: 1px solid var(--sage-primary, #76bfa2);
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.mode-toggle-btn:hover {
+    background: var(--sage-primary, #76bfa2);
+    color: white;
+}
+
+/* 讓容器維持原本的垂直排列 */
+.score-minimal-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
 /* --- Desktop 響應式優化 --- */
 @media (min-width: 1024px) {
     
