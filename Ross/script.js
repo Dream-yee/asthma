@@ -526,9 +526,8 @@ function bindInputEvents() {
                     if (nextEl) nextEl.focus();
                 }
             }
-
-            renderSelected();
             gsatMapping[input.getAttribute('data-sub')] = e.target.value;
+            renderSelected();
         })
 
         // 支援 Backspace 刪除後跳回前一格
@@ -538,6 +537,7 @@ function bindInputEvents() {
                 if (previousId) {
                     document.getElementById(previousId).focus()
                 }
+                gsatMapping[input.getAttribute('data-sub')] = undefined;
                 renderSelected();
             }
         });
