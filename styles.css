@@ -354,20 +354,6 @@ h5 {
         padding-left: 6px; /* 縮小左側標記的間距 */
     }
 
-    /* 數據標籤微調 */
-    .data-tag {
-        /* 在小螢幕上，標籤保持緊湊 */
-        /* 由於 data-tag 本身 margin-right 已經是 0，這裡不需要額外設置 */
-        /* 但我們可以確保它們能夠正常換行 */
-        white-space: normal;
-        display: block; /* 讓每個標籤獨佔一行，如果內容太長 */
-    }
-    
-    .data-separator {
-        display: none; /* 在手機上移除分隔符，或調整為極小 */
-        /* 🌟 由於標籤可能會堆疊，分隔符可能顯得怪異，可以考慮隱藏 */
-    }
-
     /* 歷史數據卡片 */
     .historical-entry-box {
         padding: 15px;
