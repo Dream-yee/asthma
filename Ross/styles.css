@@ -176,7 +176,7 @@ body {
 
 .dept-header-row {
     display: flex;
-    justify-content: space-between;
+    /* justify-content: space-between; */
     margin-bottom: 10px;
 }
 
@@ -250,6 +250,7 @@ body {
     cursor: pointer;
     font-weight: bold;
     padding: 5px;
+    margin-left: auto;
 }
 
 .data-separator {
@@ -449,6 +450,10 @@ body {
         background: var(--sage-light);
         color: var(--sage-dark);
     }
+
+    #left-hand-trigger {
+        visibility: hidden;
+    }
 }
 
 /* 針對超大螢幕 (如 2K 螢幕) 的寬度限制 */
@@ -456,4 +461,50 @@ body {
     .app-container {
         max-width: 1400px;
     }
+}
+
+#left-hand-trigger {
+    position: fixed;
+    top: 65%;
+    left: 0;
+    width: 20px; /* 平時很窄 */
+    height: 40%;
+    z-index: 4000;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: width 0.3s;
+}
+
+.trigger-indicator {
+    width: 10px;
+    height: 150px;
+    background: rgba(76, 175, 80, 0.3); /* 淡淡的綠色線條提示 */
+    border-radius: 0 4px 4px 0;
+}
+
+.left-handed .island-trigger {
+    right: auto;
+    left: 0px;
+    border-radius: 0 12px 12px 0;
+    box-shadow: 4px 0px 15px rgba(0, 0, 0, 0.15);
+}
+
+.left-handed #gsat-island{
+    right: auto;
+    left: -100px;
+    border-radius: 0px 20px 20px 0px;
+    box-shadow: 4px 0px 15px rgba(0, 0, 0, 0.15);
+}
+
+.left-handed #gsat-island.active {
+    transform: translateX(100px);
+}
+
+.left-handed .go-right-mf {
+    margin-left: 0;
+}
+
+.left-handed .delete-btn {
+    margin-left: 5px;
 }

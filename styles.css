@@ -694,6 +694,7 @@ body.dark-mode .suggestion-item.active {
     right: auto;
     left: 0px;
     border-radius: 0 12px 12px 0;
+    box-shadow: 4px 0px 15px rgba(0, 0, 0, 0.15);
 }
 
 /* 2. GSAT Island 移到左邊 */
