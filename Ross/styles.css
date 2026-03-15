@@ -270,7 +270,7 @@ body {
 /* --- GSAT Side-Island Style --- */
 /* 側邊觸發標籤 */
 .island-trigger {
-    position: absolute;
+    position: fixed;
     top: 80%;
     right: 0;
     width: 30px;
