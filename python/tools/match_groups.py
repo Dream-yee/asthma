@@ -105,7 +105,7 @@ def process_and_match_data(
             
             # 2. 查找匹配的組別代號
             group_id = subject_map.get(required_subjects)
-            remove_gsat_group_id = subject_map.get(frozenset(filter(lambda x: not x in ["國文", "英文", "數A", "數B", "自然", "社會"], multipliers.keys())))
+            remove_gsat_group_id = subject_map.get(frozenset(filter(lambda x: not x in ["國文", "英文", "數A", "數B", "自然", "社會", "術科"], multipliers.keys())))
             
             dept_data["組別代號"] = group_id
             dept_data["去學測組別代號"] = remove_gsat_group_id
