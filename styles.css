@@ -772,10 +772,6 @@ body.dark-mode .suggestion-item.active {
 /* --- GSAT island from Ross --- */
 /* 側邊觸發標籤 */
 .island-trigger {
-    position: fixed;
-    top: 80%;
-    right: 0;
-    width: 40px;
     background-color: rgba(255, 255, 255, 0.8);
     backdrop-filter: blur(10px); /* 磨砂玻璃感 */
     border: 1px solid rgba(255, 255, 255, 0.3);
@@ -791,8 +787,15 @@ body.dark-mode .suggestion-item.active {
     color: black;
 }
 
+#triggers {
+    position: fixed;
+    top: 80%;
+    right: 0;
+    width: 60px;
+}
+
 .spotlight-trigger {
-    top: 90%;
+    margin-top: 8px;
 }
 
 .trigger-icon { font-size: 18px; writing-mode: horizontal-tb; }
