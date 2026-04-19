@@ -690,9 +690,12 @@ body.dark-mode .suggestion-item.active {
 /* --- 核心：左撇子模式下的元件位移 --- */
 
 /* 1. 懸浮按鈕 (FAB) 移到左邊 */
-.left-handed .island-trigger {
+.left-handed #triggers {
     right: auto;
     left: 0px;
+}
+
+.left-handed .island-trigger {
     border-radius: 0 12px 12px 0;
     box-shadow: 4px 0px 15px rgba(0, 0, 0, 0.15);
 }
